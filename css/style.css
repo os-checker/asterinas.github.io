@@ -382,17 +382,19 @@
  .tabs .tab-bodies .active {
      display: block;
  }
- 
- /* 字体 */
- .tab-body-h {
-     width: 5rem;
+
+/* subtitle */
+.subtitle {
+    margin-top: 0.8rem;
+    margin-bottom: 0.3rem;
+}
+.subtitle-text {
      font-size: .48rem;
      background: linear-gradient(to right, #1937FF, #00F7FF);
      background-clip: text;
      color: transparent;
-     margin-bottom: .5rem;
  }
- 
+
  .tb-text {
      width: 12rem;
      font-size: .24rem;
@@ -532,16 +534,6 @@
      color: #7F818C;
      margin-left: -1.5rem;
      text-align: center;
- }
- 
- .tab-body-hTwo {
-     width: 5rem;
-     font-size: .48rem;
-     background: linear-gradient(to right, #1937FF, #00F7FF);
-     background-clip: text;
-     color: transparent;
-     margin-bottom: .5rem;
-     margin-top: 2.5rem;
  }
  
  .speed {

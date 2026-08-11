@@ -358,16 +358,17 @@ a {
     display: block;
 }
 
-
-/* 字体 */
-.tab-body-h {
-    width: 17.65rem;
-    margin-left: 1.5rem;
+/* subtitle */
+.subtitle {
+    margin-top: 1.8rem;
+    margin-bottom: 0.8rem;
+    padding: 0 1.5rem;
+}
+.subtitle-text {
     font-size: 1.9rem;
     background: linear-gradient(to right, #1937FF, #00F7FF);
     background-clip: text;
     color: transparent;
-    margin-bottom: 2rem;
 }
 
 .tb-text {
@@ -429,17 +430,6 @@ a {
 .tb-feature-text {
     font-size: 1.4rem;
     color: #7F818C;
-}
-
-.tab-body-hTwo {
-    width: 18.1rem;
-    margin-left: 1.5rem;
-    font-size: 1.9rem;
-    background: linear-gradient(to right, #1937FF, #00F7FF);
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 2rem;
-    margin-top: 6rem;
 }
 
 .speed {
