@@ -729,41 +729,31 @@ a {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .tb-supporta {
-    margin: 0 2rem 2rem 2rem;
-    width: 12.1rem;
-    height: 7.75rem;
     opacity: 1;
     background: #000319;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    line-height: 7.95rem;
+    width: 3.6rem;
+    height: 2rem;
+    min-width: 250px;
+    min-height: 150px;
+    flex-shrink: 0;
+    border-radius: 0.2rem;
+    overflow: hidden;
 }
 
-.tb-supporta-one {
-    width: 12.1rem;
-    height: 7.75rem;
+ .tb-supporta img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    display: block;
 }
-
-.tb-supporta-two {
-    width: 12.1rem;
-    height: 7.75rem;
-}
-
-.tb-supporta-three {
-    width: 12.1rem;
-    height: 7.75rem;
-}
-
-.tb-supporta-four {
-    width: 12.1rem;
-    height: 7.75rem;
-}
-
 .ti-left {
     display: none;
 }
@@ -885,3 +875,8 @@ a {
     color: #7F818C;
     padding: 1.25rem 2rem;
 }
+
+ .footer {
+     width: 100%;
+     height: 1.8rem;
+ }
