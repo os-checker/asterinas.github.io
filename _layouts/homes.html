@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }}</title>
   <link rel="shortcut icon" type="image/x-icon" href="{{ site.baseurl }}/assets/images/Asterinas icon (in blue).svg">
-  <link rel="stylesheet" href="/css/style.css" media="screen and (min-width: 769px)">
-  <link rel="stylesheet" href="/css/style-mobile.css" media="screen and (max-width: 768px)">
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css" media="screen and (min-width: 769px)">
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/style-mobile.css" media="screen and (max-width: 768px)">
 
 </head>
 
 <body>
   <div class="header">
     <div class="hdImgBox">
-      <a href="/">
+      <a href="{{ site.baseurl }}/">
         <img src="{{ site.baseurl }}/assets/images/homeIcon.png" alt="img">
       </a>
     </div>
@@ -605,7 +605,7 @@
                           <div class="tb-get-texts">
                             <div>
                               We pride ourselves on providing comprehensive documentation.
-                              Check out <a href="/book">The Asterinas Book</a> to learn more about Asterinas's technical details.
+                              Check out <a href="{{ site.baseurl }}/book">The Asterinas Book</a> to learn more about Asterinas's technical details.
                             </div>
                           </div>
                           <div class="tb-get-text">
@@ -670,16 +670,16 @@
     <div class="footer">
       <!-- <div class="footer-content">
         <div class="footer-img">
-          <a href="/">
+          <a href="{{ site.baseurl }}/">
             <img class="footer-imgOne" src="{{ site.baseurl }}/assets/images/twitter.png" alt="img">
           </a>
-          <a href="/">
+          <a href="{{ site.baseurl }}/">
             <img class="footer-imgTwo" src="{{ site.baseurl }}/assets/images/flow.png" alt="img">
           </a>
-          <a href="/">
+          <a href="{{ site.baseurl }}/">
             <img class="footer-imgTwo" src="{{ site.baseurl }}/assets/images/photo.png" alt="img">
           </a>
-          <a href="/">
+          <a href="{{ site.baseurl }}/">
             <img class="footer-imgThree" src="{{ site.baseurl }}/assets/images/email.png" alt="img">
           </a>
         </div>
