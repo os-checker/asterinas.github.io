@@ -1,3 +1,5 @@
+---
+---
 /**
  * Reset some basic elements
  */
@@ -210,6 +212,7 @@ a {
 }
 
 .tabItem .tab {
+    display: block;
     width: 7.65rem;
     height: 3.9rem;
     line-height: 3.9rem;
@@ -290,7 +293,7 @@ a {
 .img-title {
     height: 14.7rem;
     margin-top: 2rem;
-    background-image: url("/assets/images/xingxing.png");
+    background-image: url("{{ '/assets/images/xingxing.png' | relative_url }}");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     display: flex;

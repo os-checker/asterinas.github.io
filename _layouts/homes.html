@@ -5,38 +5,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ page.title }}</title>
-  <link rel="shortcut icon" type="image/x-icon" href="/assets/images/Asterinas icon (in blue).svg">
-  <link rel="stylesheet" href="/css/style.css" media="screen and (min-width: 769px)">
-  <link rel="stylesheet" href="/css/style-mobile.css" media="screen and (max-width: 768px)">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ site.baseurl }}/assets/images/Asterinas icon (in blue).svg">
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css" media="screen and (min-width: 769px)">
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/style-mobile.css" media="screen and (max-width: 768px)">
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/site-nav.css">
 
 </head>
 
 <body>
   <div class="header">
-    <div class="hdImgBox">
-      <a href="/">
-        <img src="/assets/images/homeIcon.png" alt="img">
-      </a>
-    </div>
-    <div class="hdLink">
-      <div data-tab="1" class="tab" style="color:#fff">Home
-        <div class="dot"></div>
-      </div>
-      <div data-tab="2" class="tab">Blog</div>
-      <div data-tab="3" class="tab">Docs</div>
-    </div>
-    <div class="hdLinks">
-      <div style="cursor: pointer;">
-        <img src="/assets/images/navigation.jpg" alt="img">
-      </div>
-      <div class="tabItem" flot="false">
-        <div data-tab="1" class="tab" style="color:#fff;font-weight: 500;"><div class="dot"></div>Home</div>
-        <div class="line"></div>
-        <div data-tab="2" class="tab">Blog</div>
-        <div class="line"></div>
-        <div data-tab="3" class="tab">Docs</div>
-      </div>
-    </div>
+    {% include site-nav.html active="home" %}
   </div>
   <div class="tops">
     <div class="banner">
@@ -82,7 +60,7 @@
                       </p>
                       <div class="tb-feature">
                         <div class="tb-featureOne">
-                          <img src="/assets/images/Strong.png" alt="img">
+                          <img src="{{ site.baseurl }}/assets/images/Strong.png" alt="img">
                           <div class="tb-featureBox">
                             <div class="tb-feature-title">
                               Strong Security
@@ -96,7 +74,7 @@
 
                         </div>
                         <div class="tb-featureTwo">
-                          <img src="/assets/images/Excellent.png" alt="img">
+                          <img src="{{ site.baseurl }}/assets/images/Excellent.png" alt="img">
                           <div class="tb-featureBox">
                             <div class="tb-feature-title">
                               Excellent Performance
@@ -110,7 +88,7 @@
 
                         </div>
                         <div class="tb-featureThree">
-                          <img src="/assets/images/Broad.png" alt="img">
+                          <img src="{{ site.baseurl }}/assets/images/Broad.png" alt="img">
                           <div class="tb-featureBox">
                             <div class="tb-feature-title">
                               Broad Usage
@@ -124,7 +102,7 @@
 
                         </div>
                         <div class="tb-featureFour">
-                          <img src="/assets/images/Seamless.png" alt="img">
+                          <img src="{{ site.baseurl }}/assets/images/Seamless.png" alt="img">
                           <div class="tb-featureBox">
                             <div class="tb-feature-title">
                               Seamless Compatibility
@@ -164,25 +142,25 @@
                         <div class="ti-left">
                           <div class="tl-jump actives" data-tab="tabs1">
                             <div class="tl-jumpImg">
-                              <img style="width: 2rem;" src="/assets/images/jump.png" alt="img">
+                              <img style="width: 2rem;" src="{{ site.baseurl }}/assets/images/jump.png" alt="img">
                             </div>
                             Jump start
                           </div>
                           <div class="tl-jump" data-tab="tabs2">
                             <div class="tl-jumpImg">
-                              <img style="width: 1.3rem;" src="/assets/images/crate.png" alt="img">
+                              <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/crate.png" alt="img">
                             </div>
                             Crate reuse
                           </div>
                           <div class="tl-jump" data-tab="tabs3">
                             <div class="tl-jumpImg">
-                              <img style="width: 1.3rem;" src="/assets/images/rapid.png" alt="img">
+                              <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/rapid.png" alt="img">
                             </div>
                             Rapid testing
                           </div>
                           <div class="tl-jump" data-tab="tabs4">
                             <div class="tl-jumpImg">
-                              <img style="width: 1.3rem;" src="/assets/images/safe.png" alt="img">
+                              <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/safe.png" alt="img">
                             </div>
                             Safe coding
                           </div>
@@ -193,11 +171,11 @@
                               <div class="tl-jumps actives-mobile" data-tab="mobile-tabs1">
                                 <div class="ti-lefts-box">
                                   <div class="tl-jumpImgs" style="margin-left: -0.3rem; margin-right: .45rem;">
-                                    <img style="width: 2rem;" src="/assets/images/jump-mobile.png" alt="img">
+                                    <img style="width: 2rem;" src="{{ site.baseurl }}/assets/images/jump-mobile.png" alt="img">
                                   </div>
                                   Jump start
                                 </div>
-                                <img class="ti-direction" src="/assets/images/direction.png" alt="img">
+                                <img class="ti-direction" src="{{ site.baseurl }}/assets/images/direction.png" alt="img">
                               </div>
                               <!-- 第一个Jump start样式框 -->
                               <div class="ti-rights-box actives-mobile" id="mobile-tabs1">
@@ -241,11 +219,11 @@
                               <div class="tl-jumps" data-tab="mobile-tabs2">
                                 <div class="ti-lefts-box">
                                   <div class="tl-jumpImgs">
-                                    <img style="width: 1.3rem;" src="/assets/images/crate-mobile.png" alt="img">
+                                    <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/crate-mobile.png" alt="img">
                                   </div>
                                   Crate reuse
                                 </div>
-                                <img class="ti-direction" src="/assets/images/direction.png" alt="img">
+                                <img class="ti-direction" src="{{ site.baseurl }}/assets/images/direction.png" alt="img">
                               </div>
                               <!-- 第一个Rapid testing样式框 -->
                               <div class="ti-rights-box" id="mobile-tabs2">
@@ -257,7 +235,7 @@
                                       This fosters a more vibrant ecosystem of OS crates,
                                       reusable across different Rust OSes.
                                     </p>
-                                    <img class="acimg" style="margin-top: .4rem;" src="/assets/images/reusable.png"
+                                    <img class="acimg" style="margin-top: .4rem;" src="{{ site.baseurl }}/assets/images/reusable.png"
                                       alt="img">
                                   </div>
                                 </div>
@@ -267,11 +245,11 @@
                               <div class="tl-jumps" data-tab="mobile-tabs3">
                                 <div class="ti-lefts-box">
                                   <div class="tl-jumpImgs">
-                                    <img style="width: 1.3rem;" src="/assets/images/rapid-mobile.png" alt="img">
+                                    <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/rapid-mobile.png" alt="img">
                                   </div>
                                   Rapid testing
                                 </div>
-                                <img class="ti-direction" src="/assets/images/direction.png" alt="img">
+                                <img class="ti-direction" src="{{ site.baseurl }}/assets/images/direction.png" alt="img">
                               </div>
                               <!-- 第一个Rapid testing样式框 -->
                               <div class="ti-rights-box" id="mobile-tabs3">
@@ -308,11 +286,11 @@
                               <div class="tl-jumps" data-tab="mobile-tabs4">
                                 <div class="ti-lefts-box">
                                   <div class="tl-jumpImgs">
-                                    <img style="width: 1.3rem;" src="/assets/images/safe-mobile.png" alt="img">
+                                    <img style="width: 1.3rem;" src="{{ site.baseurl }}/assets/images/safe-mobile.png" alt="img">
                                   </div>
                                   Safe coding
                                 </div>
-                                <img class="ti-direction" src="/assets/images/direction.png" alt="img">
+                                <img class="ti-direction" src="{{ site.baseurl }}/assets/images/direction.png" alt="img">
                               </div>
                               <!-- 第一个Safe coding样式框 -->
                               <div class="ti-rights-box" id="mobile-tabs4">
@@ -415,7 +393,7 @@
                                   This fosters a more vibrant ecosystem of OS crates, reusable
                                   across different Rust OSes.
                                 </p>
-                                <img class="acimg" style="margin-top: .4rem;" src="/assets/images/reusable.png"
+                                <img class="acimg" style="margin-top: .4rem;" src="{{ site.baseurl }}/assets/images/reusable.png"
                                   alt="img">
                               </div>
                             </div>
@@ -448,8 +426,8 @@
                     </div>
                     <div>
                       <div>
-                        <div class="tb-seeBoxs">
-                        </div>
+                        <a class="tb-seeBoxs" href="{{ site.baseurl }}/contributors.html" aria-label="See individual contributors">
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -463,12 +441,12 @@
                     <div class="speed">
 
                       <span class="speed-span">
-                        <span><img class="speed-img" src="/assets/images/yinone.png" alt="img"></span>
+                        <span><img class="speed-img" src="{{ site.baseurl }}/assets/images/yinone.png" alt="img"></span>
                         The speed of a monolithic kernel, the security of a microkernel
-                        <span><img class="speed-img" src="/assets/images/yintow.png" alt="img"></span>
+                        <span><img class="speed-img" src="{{ site.baseurl }}/assets/images/yintow.png" alt="img"></span>
 
                       </span>
-                      <img class="speed-imgone" src="/assets/images/yinthree.png" alt="img">
+                      <img class="speed-imgone" src="{{ site.baseurl }}/assets/images/yinthree.png" alt="img">
                     </div>
                     <div class="tb-text">
                       Asterinas adopts the novel framekernel OS architecture, which unleashes the full power of Rust
@@ -483,57 +461,57 @@
                     </div>
                     <div class="tb-osBox">
                       <div class="tb-oscon">
-                        <img src="/assets/images/monolithic.png" alt="img">
+                        <img src="{{ site.baseurl }}/assets/images/monolithic.png" alt="img">
                         <div class="tb-oscon-intBox">
                           <div class="tb-oscon-introduce">
-                            <img class="tb-oscon-tcb" src="/assets/images/tcb.png" alt="img">
+                            <img class="tb-oscon-tcb" src="{{ site.baseurl }}/assets/images/tcb.png" alt="img">
                             <span>TCB</span>
                           </div>
                           <div class="tb-oscon-introduce" style="margin-right: .4rem;">
-                            <img class="tb-oscon-tcb" src="/assets/images/nontcb.png" alt="img">
+                            <img class="tb-oscon-tcb" src="{{ site.baseurl }}/assets/images/nontcb.png" alt="img">
                             <span>Non-TCB</span>
                           </div>
                         </div>
                       </div>
                       <div class="tb-oscon">
-                        <img src="/assets/images/microkernel.png" alt="img">
+                        <img src="{{ site.baseurl }}/assets/images/microkernel.png" alt="img">
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-slow" src="/assets/images/slow.png" alt="img">
+                          <img class="tb-oscon-slow" src="{{ site.baseurl }}/assets/images/slow.png" alt="img">
                           <span>Slow path (e.g., syscall, RPG)</span>
                         </div>
                       </div>
                       <div class="tb-oscon">
-                        <img src="/assets/images/framekernel.png" alt="img">
+                        <img src="{{ site.baseurl }}/assets/images/framekernel.png" alt="img">
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-fast" src="/assets/images/fast.png" alt="img">
+                          <img class="tb-oscon-fast" src="{{ site.baseurl }}/assets/images/fast.png" alt="img">
                           <span>Fast path (e.g., func call)</span>
                         </div>
                       </div>
                     </div>
                     <div class="tb-osBox-mobile">
                       <div id="carousel" class="carousel">
-                        <div class="carousel-item" ><img src="/assets/images/monolithic-mobile.png"
+                        <div class="carousel-item" ><img src="{{ site.baseurl }}/assets/images/monolithic-mobile.png"
                             alt="Image 1"></div>
-                        <div class="carousel-item" ><img src="/assets/images/frame-mobile.png"
+                        <div class="carousel-item" ><img src="{{ site.baseurl }}/assets/images/frame-mobile.png"
                             alt="Image 2"></div>
-                        <div class="carousel-item" ><img src="/assets/images/micro-mobile.png"
+                        <div class="carousel-item" ><img src="{{ site.baseurl }}/assets/images/micro-mobile.png"
                             alt="Image 3"></div>
                       </div>
                       <div class="tb-oscon-intBox">
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-tcb" src="/assets/images/tcb.png" alt="img">
+                          <img class="tb-oscon-tcb" src="{{ site.baseurl }}/assets/images/tcb.png" alt="img">
                           <span>TCB</span>
                         </div>
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-tcb" src="/assets/images/nontcb.png" alt="img">
+                          <img class="tb-oscon-tcb" src="{{ site.baseurl }}/assets/images/nontcb.png" alt="img">
                           <span>Non-TCB</span>
                         </div>
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-slow" src="/assets/images/slow.png" alt="img">
+                          <img class="tb-oscon-slow" src="{{ site.baseurl }}/assets/images/slow.png" alt="img">
                           <span>Slow path</span>
                         </div>
                         <div class="tb-oscon-introduce">
-                          <img class="tb-oscon-fast" src="/assets/images/fast.png" alt="img">
+                          <img class="tb-oscon-fast" src="{{ site.baseurl }}/assets/images/fast.png" alt="img">
                           <span>Fast path</span>
                         </div>
                       </div>
@@ -605,7 +583,7 @@
                           <div class="tb-get-texts">
                             <div>
                               We pride ourselves on providing comprehensive documentation.
-                              Check out <a href="/book">The Asterinas Book</a> to learn more about Asterinas's technical details.
+                              Check out <a href="{{ site.baseurl }}/book">The Asterinas Book</a> to learn more about Asterinas's technical details.
                             </div>
                           </div>
                           <div class="tb-get-text">
@@ -631,12 +609,12 @@
                       We express our heartfelt gratitude to the contributors who have made this project a reality.
                     </div>
                     <div class="tb-seeBox">
-                      <button class="tb-see">
+                      <a class="tb-see" href="{{ site.baseurl }}/contributors.html">
                         <div class="tb-see-title">
                           See individual contributors
                         </div>
-                        <img src="/assets/images/right.png" alt="img">
-                      </button>
+                        <img src="{{ site.baseurl }}/assets/images/right.png" alt="img">
+                      </a>
                     </div>
 
                     <div class="tb-text">
@@ -648,19 +626,16 @@
                   </div>
                   <div class="tb-support">
                     <a class="tb-supporta" href="https://www.antgroup.com/en">
-                      <img class="tb-supporta-one" src="/assets/images/ant.png" alt="img">
+                      <img class="tb-supporta-one" src="{{ site.baseurl }}/assets/images/ant.png" alt="img">
                     </a>
                     <a class="tb-supporta" href="https://english.pku.edu.cn/">
-                      <img class="tb-supporta-two" src="/assets/images/peking.png" alt="img">
-
+                      <img class="tb-supporta-two" src="{{ site.baseurl }}/assets/images/peking.png" alt="img">
                     </a>
                     <a class="tb-supporta" href="https://www.intel.com/content/www/us/en/homepage.html">
-                      <img class="tb-supporta-three" src="/assets/images/intel.png" alt="img">
-
+                      <img class="tb-supporta-three" src="{{ site.baseurl }}/assets/images/intel.png" alt="img">
                     </a>
                     <a class="tb-supporta" href="https://www.sustech.edu.cn/en/">
-                      <img class="tb-supporta-four" src="/assets/images/sust.png" alt="img">
-
+                      <img class="tb-supporta-four" src="{{ site.baseurl }}/assets/images/sust.png" alt="img">
                     </a>
                   </div>
                 </div>
@@ -673,17 +648,17 @@
     <div class="footer">
       <!-- <div class="footer-content">
         <div class="footer-img">
-          <a href="/">
-            <img class="footer-imgOne" src="/assets/images/twitter.png" alt="img">
+          <a href="{{ site.baseurl }}/">
+            <img class="footer-imgOne" src="{{ site.baseurl }}/assets/images/twitter.png" alt="img">
           </a>
-          <a href="/">
-            <img class="footer-imgTwo" src="/assets/images/flow.png" alt="img">
+          <a href="{{ site.baseurl }}/">
+            <img class="footer-imgTwo" src="{{ site.baseurl }}/assets/images/flow.png" alt="img">
           </a>
-          <a href="/">
-            <img class="footer-imgTwo" src="/assets/images/photo.png" alt="img">
+          <a href="{{ site.baseurl }}/">
+            <img class="footer-imgTwo" src="{{ site.baseurl }}/assets/images/photo.png" alt="img">
           </a>
-          <a href="/">
-            <img class="footer-imgThree" src="/assets/images/email.png" alt="img">
+          <a href="{{ site.baseurl }}/">
+            <img class="footer-imgThree" src="{{ site.baseurl }}/assets/images/email.png" alt="img">
           </a>
         </div>
         <div class="footer-title">
@@ -695,22 +670,6 @@
   </div>
 
   <script>
-
-    var tabs = document.querySelectorAll('.tab');
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        var tabId = this.getAttribute('data-tab');
-        if (tabId === '1') {
-          window.location.href = '/index.html';
-        } else if (tabId === '2') {
-          window.location.href = '/blog.html';
-        } else if (tabId === '3') {
-          window.location.href = 'https://asterinas.github.io/book';
-        }
-      });
-
-    })
-
 
     window.addEventListener('DOMContentLoaded', function () {
       const screenWidth = window.innerWidth;
@@ -786,16 +745,6 @@
       });
     });
 
-    const seeBox = document.querySelectorAll('.tb-seeBox');
-    seeBox[0].addEventListener('click', function () {
-      window.location.href = '/contributors.html';
-    })
-
-    const seeBoxs = document.querySelectorAll('.tb-seeBoxs');
-    seeBoxs[0].addEventListener('click', function () {
-      window.location.href = '/contributors.html';
-    })
-
     // 获取所有的图片元素
     let carouselItems = document.querySelectorAll('.carousel-item');
 
@@ -847,55 +796,8 @@
       }
     }, false);
 
-
-    window.addEventListener('DOMContentLoaded', function () {
-      const screenWidth = window.innerWidth;
-      const hdLink = document.querySelectorAll('.hdLink');
-      const hdLinks = document.querySelectorAll('.hdLinks');
-      console.log(screenWidth)
-      if (screenWidth > 768) {
-        console.log(111)
-        hdLink[0].style.display = 'flex';
-        hdLinks[0].style.display = 'none';
-      } else {
-        console.log(222)
-        hdLink[0].style.display = 'none';
-        hdLinks[0].style.display = 'block';
-      }
-
-      // 监听窗口大小变化事件
-      window.addEventListener('resize', function () {
-        const currentScreenWidth = window.innerWidth;
-        if (currentScreenWidth > 768) {
-          hdLink[0].style.display = 'flex';
-          hdLinks[0].style.display = 'none';
-        } else {
-          hdLink[0].style.display = 'none';
-          hdLinks[0].style.display = 'block';
-        }
-      })
-    });
-
-    const hdLinks = document.querySelectorAll('.hdLinks');
-    const tabItem = document.querySelectorAll('.tabItem');
-    hdLinks[0].addEventListener('click', function () {
-      if (tabItem[0].getAttribute('flot') === 'false') {
-        tabItem[0].style.display = 'block';
-        tabItem[0].setAttribute('flot', true);
-      } else {
-        tabItem[0].style.display = 'none';
-        tabItem[0].setAttribute('flot', 'false');
-      }
-    });
-
-    window.onclick = (event) => {
-      if (event.target !== tabItem[0] && event.target !== hdLinks[0].children[0].children[0]) {
-        tabItem[0].style.display = 'none';
-        tabItem[0].setAttribute('flot', 'false');
-      }
-    }
-
   </script>
+  <script src="{{ site.baseurl }}/js/site-nav.js"></script>
 </body>
 
 </html>
