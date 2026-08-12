@@ -24,7 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   Asterinas is an open-source community to advance Rust-based OSes
 # For forks (e.g., `username/asterinas.github.io` hosted on GitHub Pages),
 # set `baseurl` to `/asterinas.github.io` to ensure all local links and assets resolve correctly.
-baseurl: ""
+baseurl: "/asterinas.github.io"
 url: asterinas.github.io
 github_username:  asterinas
 
