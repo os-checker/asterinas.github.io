@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://0.0.0.0:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0:4000/" rel="alternate" type="text/html" /><updated>2026-08-12T01:13:13+00:00</updated><id>http://0.0.0.0:4000/feed.xml</id><title type="html">Asterinas</title><subtitle>Asterinas is an open-source community to advance Rust-based OSes</subtitle><entry><title type="html">Announcing Asterinas 0.18.0</title><link href="http://0.0.0.0:4000/2026/06/04/announcing-asterinas-0.18.0.html" rel="alternate" type="text/html" title="Announcing Asterinas 0.18.0" /><published>2026-06-04T01:00:00+00:00</published><updated>2026-06-04T01:00:00+00:00</updated><id>http://0.0.0.0:4000/2026/06/04/announcing-asterinas-0.18.0</id><content type="html" xml:base="http://0.0.0.0:4000/2026/06/04/announcing-asterinas-0.18.0.html"><![CDATA[<p>The <a href="https://github.com/asterinas/asterinas">Asterinas</a> community is happy to announce a new version of Asterinas, <a href="https://github.com/asterinas/asterinas/releases/tag/v0.18.0">0.18.0</a>!</p>
+
+<div class="video-container">
+    <iframe src="//player.bilibili.com/player.html?isOutside=true&amp;aid=116692231391283&amp;bvid=BV1sfEA6NENm&amp;cid=38859048677&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+    </iframe>
+</div>
+
+<p>The headline of this release is a major step toward running Asterinas as the guest OS for VM-based <strong><a href="https://katacontainers.io/">Kata Containers</a></strong> and <strong><a href="https://confidentialcontainers.org/">Confidential Containers (CoCo)</a></strong>. Getting there requires a host of new building blocks, and this release delivers many of them: <strong>namespaces</strong> (the IPC and cgroup namespaces, plus nsfs at <code class="language-plaintext highlighter-rouge">/proc/[pid]/ns</code>), <strong>cgroups</strong> (the PID sub-controller and a partial CPU sub-controller), <strong>virtio-fs</strong> for sharing a filesystem with the host, <strong>virtio-rng</strong> (<code class="language-plaintext highlighter-rouge">/dev/hwrng</code>) for hardware entropy, and a fully <strong>reimplemented vsock</strong> for host–guest communication.</p>
+
+<p>Userspace debugging comes to Asterinas in this release. We implement the <strong><code class="language-plaintext highlighter-rouge">ptrace</code></strong> syscall along with its core operations—<code class="language-plaintext highlighter-rouge">PTRACE_SETOPTIONS</code>, <code class="language-plaintext highlighter-rouge">PTRACE_SYSCALL</code>, and <code class="language-plaintext highlighter-rouge">PTRACE_PEEK</code>/<code class="language-plaintext highlighter-rouge">POKE</code>—which together enable popular debugging tools such as <strong>GDB</strong> and <strong>strace</strong> to run on Asterinas, complete with verified-usage documentation and CI coverage.</p>
+
+<p>This release also substantially modernizes the storage stack. The <strong>ext2 filesystem has been reimplemented</strong>, a new <strong>NVMe driver</strong> joins the block layer, and the VFS gains a new <strong><code class="language-plaintext highlighter-rouge">Dentry</code> revalidate mechanism</strong> alongside a <strong>refactored page cache</strong>. The result is a more reliable and capable storage stack.</p>
+
+<p>Finally, Asterinas NixOS dramatically expands its coverage of real-world software, with <strong>over 100 popular packages now verified</strong>—including <strong>Codex</strong>, <strong>QEMU</strong>, and <strong>Firefox</strong>. To keep this growing catalog working, we have integrated a range of new test suites, including <strong>kselftest</strong>, <strong>xfstests</strong>, and the standard unit-test suites of <strong>Go</strong>, <strong>Python</strong>, and <strong>JDK</strong>.</p>
+
+<h2 id="asterinas-nixos">Asterinas NixOS</h2>
+
+<p>We have made the following key changes to Asterinas NixOS:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2771">Add a framework for Asterinas NixOS test suites</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2956">Add documentation for more verified applications</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3187">Add tests for popular applications</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2943">Add Go std test on Asterinas NixOS</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3017">Add JDK test on Asterinas NixOS</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2944">Add Python regression tests on Asterinas NixOS</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3245">Add QEMU test for virtualization applications</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3286">Support <code class="language-plaintext highlighter-rouge">ARCH_GET_GS</code>/<code class="language-plaintext highlighter-rouge">ARCH_SET_GS</code> to enable Firefox</a></li>
+</ul>
+
+<h2 id="asterinas-kernel">Asterinas Kernel</h2>
+
+<p>We have made the following key changes to the Asterinas kernel:</p>
+
+<ul>
+  <li>Process management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2877">Refactor <code class="language-plaintext highlighter-rouge">PidFile</code> and add the <code class="language-plaintext highlighter-rouge">pidfd_getfd</code> syscall</a>, <a href="https://github.com/asterinas/asterinas/pull/2912">add the <code class="language-plaintext highlighter-rouge">pidfd_send_signal</code> syscall</a>, and <a href="https://github.com/asterinas/asterinas/pull/2922">align <code class="language-plaintext highlighter-rouge">PidFile</code> semantics with POSIX</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2777">Fix buggy behavior when loading corrupted ELF files</a></li>
+    </ul>
+  </li>
+  <li>Ptrace
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2984">Add the <code class="language-plaintext highlighter-rouge">ptrace</code> syscall</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3065">Support debugging with <code class="language-plaintext highlighter-rouge">ptrace</code></a></li>
+      <li>Add <a href="https://github.com/asterinas/asterinas/pull/3061"><code class="language-plaintext highlighter-rouge">PTRACE_SETOPTIONS</code></a>, <a href="https://github.com/asterinas/asterinas/pull/3241"><code class="language-plaintext highlighter-rouge">PTRACE_SYSCALL</code></a>, and <a href="https://github.com/asterinas/asterinas/pull/3242"><code class="language-plaintext highlighter-rouge">PTRACE_PEEK/POKE_TEXT/DATA</code></a></li>
+      <li>Add (kernel-side) patches, verified-usage docs, and CI for <a href="https://github.com/asterinas/asterinas/pull/3254">GDB</a> and <a href="https://github.com/asterinas/asterinas/pull/3266">strace</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2855">Support force-write via <code class="language-plaintext highlighter-rouge">/proc/[pid]/mem</code></a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3018">Add the Yama ptrace scope</a></li>
+    </ul>
+  </li>
+  <li>Signals and IPC
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3050">Correct <code class="language-plaintext highlighter-rouge">sigsuspend</code> and fix various other signal behaviors</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3199">Fix lots of bugs in System V semaphores</a></li>
+    </ul>
+  </li>
+  <li>Memory management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3012">Respect <code class="language-plaintext highlighter-rouge">mmap</code> address hints</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2766">Fix many wrong error codes and other buggy behavior in various MM syscalls</a></li>
+    </ul>
+  </li>
+  <li>File systems
+    <ul>
+      <li>VFS
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2798">Add the pseudo <code class="language-plaintext highlighter-rouge">Path</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3048">Introduce the <code class="language-plaintext highlighter-rouge">Dentry</code> revalidate mechanism</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2953">Refactor the page cache implementation</a> and <a href="https://github.com/asterinas/asterinas/pull/3256">fix a page cache bug that leaks uninitialized memory to userspace</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2445">Implement the <code class="language-plaintext highlighter-rouge">pivot_root</code> syscall</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3185">Implement <code class="language-plaintext highlighter-rouge">O_TMPFILE</code> support for <code class="language-plaintext highlighter-rouge">open</code>/<code class="language-plaintext highlighter-rouge">openat</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2887">Refactor <code class="language-plaintext highlighter-rouge">Metadata</code>’s fields and fix pseudo-filesystems’ Device ID</a></li>
+        </ul>
+      </li>
+      <li>virtio-fs
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3084">Support virtio-fs in Asterinas</a></li>
+        </ul>
+      </li>
+      <li>Ext2
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3171">Rewrite the ext2 filesystem</a></li>
+        </ul>
+      </li>
+      <li>Procfs
+        <ul>
+          <li>Add <a href="https://github.com/asterinas/asterinas/pull/2929"><code class="language-plaintext highlighter-rouge">/proc/mounts</code></a>, <a href="https://github.com/asterinas/asterinas/pull/3073"><code class="language-plaintext highlighter-rouge">/proc/[pid]/auxv</code></a>, <a href="https://github.com/asterinas/asterinas/pull/3125"><code class="language-plaintext highlighter-rouge">/proc/[tid]</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2925">more entries in <code class="language-plaintext highlighter-rouge">/proc/[pid]/maps</code></a>, and <a href="https://github.com/asterinas/asterinas/pull/3054"><code class="language-plaintext highlighter-rouge">mountstats</code></a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Sockets and networking
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3122">Rewrite vsock</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3129">Add initial IPv6 support</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3141">Reject binding to privileged ports without <code class="language-plaintext highlighter-rouge">CAP_NET_BIND_SERVICE</code></a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3282">Fix some UDP problems</a></li>
+    </ul>
+  </li>
+  <li>Namespaces and cgroups
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2966">Support nsfs (<code class="language-plaintext highlighter-rouge">/proc/[pid]/ns</code>)</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2988">Support the IPC namespace</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3109">Support the cgroup namespace</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2987">Implement the cgroup PID sub-controller</a></li>
+      <li>Add a partial cgroup CPU sub-controller, providing <a href="https://github.com/asterinas/asterinas/pull/3116"><code class="language-plaintext highlighter-rouge">cpu.stat</code> statistics</a> and <a href="https://github.com/asterinas/asterinas/pull/3175">dummy <code class="language-plaintext highlighter-rouge">cpu.weight</code>/<code class="language-plaintext highlighter-rouge">cpu.max</code> limit files</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3082">Bind mount namespace files</a></li>
+    </ul>
+  </li>
+  <li>Security
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2978">Implement capabilities and execution of programs by root</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3092">Implement capability bounding set support</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2952">Fix credentials-related system calls and clean them up</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3078">Add the initial LSM framework</a></li>
+    </ul>
+  </li>
+  <li>Devices
+    <ul>
+      <li>Block and NVMe
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/1984">Add the NVMe driver</a></li>
+        </ul>
+      </li>
+      <li>PCI
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2680">Improve PCI device enumeration and detection</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2914">Get the PCI bus range from FDT/ACPI and add support for PCI ECAM on x86</a></li>
+        </ul>
+      </li>
+      <li>TTY and console
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3049">Support multiple TTYs</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2837">Support the NS16550A UART console, <code class="language-plaintext highlighter-rouge">/dev/ttyS0</code>, and <code class="language-plaintext highlighter-rouge">console=ttyS0</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3000">Keyboard enhancements</a></li>
+        </ul>
+      </li>
+      <li>VirtIO
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2951">Support <code class="language-plaintext highlighter-rouge">virtio-rng</code> and expose it as <code class="language-plaintext highlighter-rouge">/dev/hwrng</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/3160">Model <code class="language-plaintext highlighter-rouge">virtqueue</code> as untrusted and use fallible allocation in <code class="language-plaintext highlighter-rouge">aster-virtio</code></a></li>
+        </ul>
+      </li>
+      <li>TDX
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2891">Add TSM-MR (measurement register) sysfs support</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Tests
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2900">Add Linux kselftest test suite</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2945">Add the xfstests test suite</a></li>
+    </ul>
+  </li>
+  <li>Misc
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2819">Add a generic syscall table</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3010">Introduce the kernel parameter framework</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="asterinas-ostd--osdk">Asterinas OSTD &amp; OSDK</h2>
+
+<p>We have made the following key changes to OSTD and/or OSDK:</p>
+
+<ul>
+  <li>OSTD
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3080">Replace the <code class="language-plaintext highlighter-rouge">log</code> crate with OSTD’s own logging API</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2898">Refactor <code class="language-plaintext highlighter-rouge">Pod</code> with zerocopy</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2351">Refactor the DMA APIs</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/3022">Add a Memcpy/Memset trait framework for typed memory copies</a></li>
+    </ul>
+  </li>
+  <li>Misc
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2691">Add a Docker development environment on ARM (aarch64)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="asterinas-book">Asterinas Book</h2>
+
+<p>We have made the following key changes to the Book:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2974">Add coding guidelines</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3042">Add OSTD soundness analysis</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3170">Add Kata Containers documentation</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/3192">Add Confidential Containers (CoCo) documentation</a></li>
+</ul>
+
+<h2 id="contributors">Contributors</h2>
+
+<p>This release was made possible by contributions from 36 individuals. Thank you for your amazing work!</p>
+
+<ul>
+  <li>Ruihan Li (191 commits)</li>
+  <li>jiangjianfeng (92 commits)</li>
+  <li>Wang Siyuan (72 commits)</li>
+  <li>Qingsong Chen (64 commits)</li>
+  <li>Chen Chengjun (59 commits)</li>
+  <li>Tate, Hongliang Tian (52 commits)</li>
+  <li>Tao Su (46 commits)</li>
+  <li>Zhang Junyang (36 commits)</li>
+  <li>zjp (26 commits)</li>
+  <li>li041 (23 commits)</li>
+  <li>Xinyi Yu (23 commits)</li>
+  <li>Marsman1996 (18 commits)</li>
+  <li>wyt8 (17 commits)</li>
+  <li>Aaron Chen (9 commits)</li>
+  <li>zzj-5341 (9 commits)</li>
+  <li>Chaoqun Zheng (8 commits)</li>
+  <li>Hsy-Intel (7 commits)</li>
+  <li>Cautreoxit (4 commits)</li>
+  <li>Chao Liu (4 commits)</li>
+  <li>Junrui Luo (4 commits)</li>
+  <li>Ray Lee (4 commits)</li>
+  <li>rikosellic (4 commits)</li>
+  <li>TankTechnology (4 commits)</li>
+  <li>Zhenchen Wang (4 commits)</li>
+  <li>Yuke Peng (3 commits)</li>
+  <li>Zhihang Shao (3 commits)</li>
+  <li>yyda (3 commits)</li>
+  <li>Arthur Paulino (1 commit)</li>
+  <li>Jakob Hellermann (1 commit)</li>
+  <li>Linermao (1 commit)</li>
+  <li>lxh (1 commit)</li>
+  <li>Shen Bowen (1 commit)</li>
+  <li>Wei Zhang (1 commit)</li>
+  <li>wrj97 (1 commit)</li>
+  <li>YanLien (1 commit)</li>
+  <li>zzjrabbit (1 commit)</li>
+</ul>]]></content><author><name>Hongliang Tian</name></author><summary type="html"><![CDATA[The Asterinas community is happy to announce a new version of Asterinas, 0.18.0!]]></summary></entry><entry><title type="html">Announcing Asterinas 0.17.0</title><link href="http://0.0.0.0:4000/2025/12/19/announcing-asterinas-0.17.0.html" rel="alternate" type="text/html" title="Announcing Asterinas 0.17.0" /><published>2025-12-19T01:00:00+00:00</published><updated>2025-12-19T01:00:00+00:00</updated><id>http://0.0.0.0:4000/2025/12/19/announcing-asterinas-0.17.0</id><content type="html" xml:base="http://0.0.0.0:4000/2025/12/19/announcing-asterinas-0.17.0.html"><![CDATA[<p>The <a href="https://github.com/asterinas/asterinas">Asterinas</a> community is happy to announce a new version of Asterinas, <a href="https://github.com/asterinas/asterinas/releases/tag/v0.17.0">0.17.0</a>!</p>
+
+<div class="video-container">
+    <iframe src="//player.bilibili.com/player.html?isOutside=true&amp;aid=115707140442459&amp;bvid=BV1oom2B2EqP&amp;cid=34699609375&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+    </iframe>
+</div>
+
+<p>This release marks a significant milestone in the evolution of Asterinas as we transition from “just a kernel” to a more complete, usable system. The headline of this release is the introduction of <strong>Asterinas NixOS</strong>, our first distribution that integrates the Asterinas kernel with the <a href="https://nixos.org/">NixOS</a> userspace, and enables real applications and services out of the box—including <strong>XFCE</strong>, <strong>Podman</strong>, and <strong>systemd</strong>. To support this growth, we are also strengthening our governance by establishing <strong>the formal RFC (Request for Comments) process</strong>, ensuring that major architectural decisions—starting with Asterinas NixOS itself—are designed transparently and collaboratively.</p>
+
+<p>On the architecture front, <strong>RISC-V support</strong> has improved dramatically, with support for SMP (Symmetric Multiprocessing), FPU (Floating-Point Unit), VirtIO, and the SiFive HiFive Unleashed QEMU machine type. The kernel has also expanded with a new <strong>input subsystem</strong> (supporting keyboards and mice) and initial support for <strong>namespaces and cgroups</strong>. For filesystem developers, the big news is the addition of an <strong>FS event notification mechanism (<code class="language-plaintext highlighter-rouge">inotify</code>)</strong>, a new <strong>ioctl infrastructure</strong>, and a new filesystem type, <strong>ConfigFS</strong>. Finally, we are introducing <strong><code class="language-plaintext highlighter-rouge">sctrace</code></strong>—a dedicated tool for tracing and debugging syscall compatibility—now published on <a href="https://crates.io/crates/sctrace">crates.io</a>.</p>
+
+<p>We’d also like to extend a huge congratulations to members of the Asterinas community whose outstanding research papers about Asterinas were recently recognized by prestigious academic conferences:</p>
+
+<ul>
+  <li>“<strong>CortenMM: Efficient Memory Management with Strong Correctness Guarantees</strong>” received the Best Paper Award at <a href="https://sigops.org/s/conferences/sosp/2025/">SOSP’25</a>.</li>
+  <li>“<strong>RusyFuzz: Unhandled Exception Guided Fuzzing for Rust OS Kernel</strong>” was accepted by <a href="https://conf.researchr.org/home/icse-2026">ICSE’26</a>.</li>
+  <li>“<strong>MlsDisk: Trusted Block Storage for TEEs Based on Layered Secure Logging</strong>” was accepted by <a href="https://www.usenix.org/conference/fast26">FAST’26</a>.</li>
+</ul>
+
+<h2 id="asterinas-nixos">Asterinas NixOS</h2>
+
+<p>We have made the following key changes to Asterinas NixOS:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2621">Add NixOS as a distribution for Asterinas</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2670">Add the XFCE Nix module</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2683">Add the Podman Nix module</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2687">Enable systemd</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2652">Add Asterinas NixOS ISO installer</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2685">Add Cachix as a source for pre-built binaries</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2743">Add GitHub workflows to publish ISO images</a></li>
+</ul>
+
+<h2 id="asterinas-kernel">Asterinas Kernel</h2>
+
+<p>We have made the following key changes to the Asterinas kernel:</p>
+
+<ul>
+  <li>CPU architectures:
+    <ul>
+      <li>x86
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2505">Add TSM-based attestation support for TDX via ConfigFS</a></li>
+        </ul>
+      </li>
+      <li>RISC-V
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2319">Implement arch-aware vDSO</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2299">Add VirtIO support for RISC-V platforms</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Memory management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2408">Support sealing memfd files</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2521">Support executing memfd files and then <code class="language-plaintext highlighter-rouge">open("/proc/self/exe")</code></a></li>
+    </ul>
+  </li>
+  <li>Process management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2447">Support <code class="language-plaintext highlighter-rouge">CLONE_PARENT</code> flag</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2459">Support <code class="language-plaintext highlighter-rouge">execve</code> in multithreaded process</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2551">Support <code class="language-plaintext highlighter-rouge">PR_SET</code>/<code class="language-plaintext highlighter-rouge">GET_SECUREBITS</code></a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2516">Fix some <code class="language-plaintext highlighter-rouge">kill</code>-related behavior</a></li>
+    </ul>
+  </li>
+  <li>IPC
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2705">Add <code class="language-plaintext highlighter-rouge">rt_sigtimedwait</code> syscall</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2503">Enqueue ignored signals if the signals are blocked</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2434">Refactor <code class="language-plaintext highlighter-rouge">NamedPipe</code> to correct its opening and blocking behaviors</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2694">Support reopening anonymous pipes from <code class="language-plaintext highlighter-rouge">/proc</code></a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2515">Fix or clarify some futexes bugs</a></li>
+    </ul>
+  </li>
+  <li>File systems
+    <ul>
+      <li>VFS
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2083">Add <code class="language-plaintext highlighter-rouge">inotify</code>-related syscalls</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2686">Add new ioctl infrastructure</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2440">Add <code class="language-plaintext highlighter-rouge">chmod</code> and <code class="language-plaintext highlighter-rouge">mkmod</code> macros</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2682">Add <code class="language-plaintext highlighter-rouge">syncfs</code> syscall</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2666">Add <code class="language-plaintext highlighter-rouge">fchmodat2</code> syscall</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2418">Support mount bind with a file</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2432">Support <code class="language-plaintext highlighter-rouge">MS_REMOUNT</code> flag</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2555">Ensure that every <code class="language-plaintext highlighter-rouge">FileLike</code> is associated with a <code class="language-plaintext highlighter-rouge">dyn Inode</code></a></li>
+        </ul>
+      </li>
+      <li>Devtmpfs
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2439">Add <code class="language-plaintext highlighter-rouge">/dev/full</code> device</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2598">Support registering char devices</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2560">Support registering block device (and their partitions)</a></li>
+        </ul>
+      </li>
+      <li>Procfs
+        <ul>
+          <li>Add <a href="https://github.com/asterinas/asterinas/pull/2420"><code class="language-plaintext highlighter-rouge">/proc/cmdline</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2370"><code class="language-plaintext highlighter-rouge">/proc/stat</code>, <code class="language-plaintext highlighter-rouge">/proc/uptime</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2679"><code class="language-plaintext highlighter-rouge">/proc/version</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2371"><code class="language-plaintext highlighter-rouge">/proc/[pid]/environ</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2410"><code class="language-plaintext highlighter-rouge">/proc/[pid]/oom_score_adj</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2449"><code class="language-plaintext highlighter-rouge">/proc/[pid]/cmdline</code>, <code class="language-plaintext highlighter-rouge">/proc/[pid]/mem</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2399"><code class="language-plaintext highlighter-rouge">/proc/[pid]/mountinfo</code></a>, <a href="https://github.com/asterinas/asterinas/pull/2526"><code class="language-plaintext highlighter-rouge">/proc/[pid]/fdinfo</code></a>, and <a href="https://github.com/asterinas/asterinas/pull/2725"><code class="language-plaintext highlighter-rouge">/proc/[pid]/maps</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2491">Support the sleeping and stopping states in <code class="language-plaintext highlighter-rouge">/proc/[pid]/stat</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2414">Introduce <code class="language-plaintext highlighter-rouge">VmPrinter</code></a> and <a href="https://github.com/asterinas/asterinas/pull/2583">refactor procfs with <code class="language-plaintext highlighter-rouge">VmPrinter</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2553">Fix a lot of bugs in procfs</a></li>
+        </ul>
+      </li>
+      <li>Ext2
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2658">Support Ext2 handling of FIFO and devices</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2624">Fix Ext2 directory entry iteration</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2611">Fix the behavior of syncing BlockGroup metadata in Ext2</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2675">Fix some bugs in Ext2 superblock</a></li>
+        </ul>
+      </li>
+      <li>Configfs
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2186">Add basic configfs implementation</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Sockets and networking
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2412">Support UNIX datagram sockets</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2676">Add <code class="language-plaintext highlighter-rouge">sendmmsg</code> syscall</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2442">Add <code class="language-plaintext highlighter-rouge">sethostname</code> and <code class="language-plaintext highlighter-rouge">setdomainname</code> syscalls</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2572">Support <code class="language-plaintext highlighter-rouge">SO_BROADCAST</code> and <code class="language-plaintext highlighter-rouge">IP_RECVERR</code></a></li>
+    </ul>
+  </li>
+  <li>Namespace and cgroups
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2312">Add the namespace framework (along with <code class="language-plaintext highlighter-rouge">unshare</code> and <code class="language-plaintext highlighter-rouge">setns</code> syscalls)</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2379">Add the mount namespace</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2454">Support <code class="language-plaintext highlighter-rouge">/proc/[pid]/uid_map</code> and <code class="language-plaintext highlighter-rouge">/proc/[pid]/gid_map</code></a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2282">Implement controller framework for cgroup subsystem</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2160">Enable process management for cgroups</a></li>
+    </ul>
+  </li>
+  <li>Devices
+    <ul>
+      <li>Input devices
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2364">Add the input subsystem</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2099">Map the I/O memory to the userspace</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2561">Add the input devices <code class="language-plaintext highlighter-rouge">/dev/input/eventX</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2216">Add the framebuffer device <code class="language-plaintext highlighter-rouge">/dev/fb0</code></a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2479">Add i8042 mouse</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2646">Make i8042 initialization stable on real hardware</a></li>
+        </ul>
+      </li>
+      <li>TTY and PTY
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2525">Add <code class="language-plaintext highlighter-rouge">KDSETMODE</code>/<code class="language-plaintext highlighter-rouge">KDSKBMODE</code> ioctls</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2550">Fix PTY closing behavior</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2581">Make PTY master reads block if no PTY slave is open</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2566">Make the semantics of TTY-related devices correct</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2594">Support PTY packet mode</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>System management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2552">Add <code class="language-plaintext highlighter-rouge">reboot</code> syscall</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2636">Make <code class="language-plaintext highlighter-rouge">reboot -f</code> work on real hardware</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2438">Support <code class="language-plaintext highlighter-rouge">RUSAGE_CHILDREN</code> for <code class="language-plaintext highlighter-rouge">getrusage</code></a></li>
+    </ul>
+  </li>
+  <li>Misc
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2701">Upgrade to Rust 2024 edition and the 20251208 nightly toolchain</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2427">Introduce the ASCII art of Asterinas logo in gradient colors</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2415">Add stage support for <code class="language-plaintext highlighter-rouge">init_component</code> macro</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2456">Add a new tool called Syscall Compatibility Tracer (<code class="language-plaintext highlighter-rouge">sctrace</code>)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="asterinas-ostd--osdk">Asterinas OSTD &amp; OSDK</h2>
+
+<p>We have made the following key changes to OSTD and/or OSDK:</p>
+
+<ul>
+  <li>CPU architectures
+    <ul>
+      <li>Common
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2504">Reorganize <code class="language-plaintext highlighter-rouge">ostd::arch::irq</code></a></li>
+        </ul>
+      </li>
+      <li>x86
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2395">Better x86 CPU feature detection by rewriting all CPUID-related code</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2422">Set <code class="language-plaintext highlighter-rouge">CR0.WP/NE/MP</code> explicitly to fix AP behavior</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2570">Extend cache policies for the x86 Architecture</a></li>
+        </ul>
+      </li>
+      <li>RISC-V
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2106">Add support for RISC-V PLIC</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2318">Refactor RISC-V trap handling</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2320">Add RISC-V FPU support</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2462">Implement fallible memory operations on RISC-V platform</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2481">Support bootup on SiFive HiFive Unleashed</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2368">RISC-V SMP boot</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2547">Full (&lt;=32) RISC-V SMP support</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>CPU
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2514">Extract <code class="language-plaintext highlighter-rouge">CpuId</code> into a dedicated sub-module</a></li>
+    </ul>
+  </li>
+  <li>Memory management
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2441">Make <code class="language-plaintext highlighter-rouge">UniqueFrame::repurpose</code> sound</a></li>
+    </ul>
+  </li>
+  <li>Interrupt handling
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2429">Refactor OSTD’s <code class="language-plaintext highlighter-rouge">irq</code> module for improved clarity</a></li>
+    </ul>
+  </li>
+  <li>Misc
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2027">Move PCI bus out of OSTD</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="asterinas-book">Asterinas Book</h2>
+
+<p>We have made the following key changes to the Book:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2365">Add the first RFC: “Establish the RFC process”</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2584">Add the second RFC: “Asterinas NixOS”</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2314">Add a new “Limitations on System Calls” section to the book</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2750">Add the Asterinas NixOS volume</a></li>
+</ul>
+
+<h2 id="contributors">Contributors</h2>
+
+<p>This release was made possible by contributions from 27 individuals. Thank you for your amazing work!</p>
+
+<ul>
+  <li>Ruihan Li (164 commits)</li>
+  <li>Chen Chengjun (90 commits)</li>
+  <li>jiangjianfeng (69 commits)</li>
+  <li>Zejun Zhao (45 commits)</li>
+  <li>Wang Siyuan (45 commits)</li>
+  <li>Tao Su (44 commits)</li>
+  <li>Zhang Junyang (43 commits)</li>
+  <li>Tate, Hongliang Tian (34 commits)</li>
+  <li>Qingsong Chen (21 commits)</li>
+  <li>Yuke Peng (19 commits)</li>
+  <li>Zhe Tang (18 commits)</li>
+  <li>vvsv (16 commits)</li>
+  <li>Hsy-Intel (15 commits)</li>
+  <li>Cautreoxit (13 commits)</li>
+  <li>Yang Zhichao (8 commits)</li>
+  <li>Arthur Paulino (8 commits)</li>
+  <li>wyt8 (5 commits)</li>
+  <li>Zhenchen Wang (5 commits)</li>
+  <li>Wei Zhang (5 commits)</li>
+  <li>zjp (4 commits)</li>
+  <li>Chaoqun Zheng (2 commits)</li>
+  <li>zhuowei shao (1 commit)</li>
+  <li>wheatfox (1 commit)</li>
+  <li>Ruize Tang (1 commit)</li>
+  <li>John Hughes (1 commit)</li>
+  <li>Hang Shu (1 commit)</li>
+  <li>Calvin (1 commit)</li>
+</ul>]]></content><author><name>Hongliang Tian</name></author><summary type="html"><![CDATA[The Asterinas community is happy to announce a new version of Asterinas, 0.17.0!]]></summary></entry><entry><title type="html">Announcing Asterinas 0.16.0</title><link href="http://0.0.0.0:4000/2025/08/04/announcing-asterinas-0.16.0.html" rel="alternate" type="text/html" title="Announcing Asterinas 0.16.0" /><published>2025-08-04T13:00:00+00:00</published><updated>2025-08-04T13:00:00+00:00</updated><id>http://0.0.0.0:4000/2025/08/04/announcing-asterinas-0.16.0</id><content type="html" xml:base="http://0.0.0.0:4000/2025/08/04/announcing-asterinas-0.16.0.html"><![CDATA[<p>The Asterinas community is happy to announce a new version of Asterinas, 0.16.0!</p>
+
+<p>This version marks a significant leap forward with initial support for the <strong>LoongArch CPU architecture</strong>. We’ve also greatly expanded our Linux ABI compatibility by adding <strong>nine new system calls</strong>, including <code class="language-plaintext highlighter-rouge">memfd_create</code> and <code class="language-plaintext highlighter-rouge">pidfd_open</code>.</p>
+
+<p>Key enhancements in this release include broadened functionality for <strong>UNIX sockets</strong> (now supporting file descriptor passing and the <code class="language-plaintext highlighter-rouge">SOCK_SEQPACKET</code> socket type), partial support for <strong>netlink sockets of the <code class="language-plaintext highlighter-rouge">NETLINK_KOBJECT_UEVENT</code> type</strong>, and the foundational implementation of <strong>CgroupFS</strong>. Our testing infrastructure has also seen a significant upgrade with the integration of system call tests from the <strong>Linux Test Project (LTP)</strong>. Plus, we’ve adopted <strong><a href="https://nix.dev/manual/nix/2.28/introduction">Nix</a></strong> for building the initramfs, which streamlines our cross-compilation and testing workflows.</p>
+
+<p>We’d also like to extend a huge congratulations to members of the Asterinas community whose outstanding research papers about Asterinas were recently accepted by prestigious academic conferences:</p>
+
+<ul>
+  <li>“<strong>Asterinas: A Linux ABI-Compatible, Rust-Based Framekernel OS with a Small and Sound TCB</strong>” published at <a href="https://www.usenix.org/conference/atc25/presentation/peng-yuke">USENIX ATC’25</a></li>
+  <li>“<strong>Converos: Practical Model Checking for Verifying Rust OS Kernel Concurrency</strong>” published at <a href="https://www.usenix.org/conference/atc25/presentation/tang">USENIX ATC’25</a></li>
+  <li>“<strong>CortenMM: Efficient Memory Management with Strong Correctness Guarantees</strong>” to be published at <a href="https://sigops.org/s/conferences/sosp/2025/">SOSP’25</a></li>
+</ul>
+
+<h2 id="demo-booting-on-a-lenovo-laptop">Demo: Booting on a Lenovo Laptop</h2>
+
+<p>While our early development has primarily focused on improving Asterinas for cloud environments and VMs, the enhancements in version 0.16.0 have allowed us to achieve a significant new feat: successfully booting Asterinas on a <strong>Lenovo laptop</strong> and even running a snake game!</p>
+
+<div class="video-container">
+    <iframe src="https://player.bilibili.com/player.html?isOutside=true&amp;aid=114970301828426&amp;bvid=BV1KntGzvEh8&amp;cid=31482972390&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+    </iframe>
+</div>
+
+<p>A special shout-out to Ruihan Li for his excellent work in <a href="https://github.com/asterinas/asterinas/issues/1963">making this happen</a> and capturing the demo video!</p>
+
+<h2 id="asterinas-kernel">Asterinas Kernel</h2>
+
+<p>We have made the following key changes to the Asterinas kernel:</p>
+
+<ul>
+  <li>New system calls or features:
+    <ul>
+      <li>Memory:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2162">Add the <code class="language-plaintext highlighter-rouge">mremap</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2149">Add the <code class="language-plaintext highlighter-rouge">memfd_create</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2154">Add the <code class="language-plaintext highlighter-rouge">msync</code> system call (based on an inefficient implementation)</a></li>
+        </ul>
+      </li>
+      <li>Processes and IPC:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2151">Add the <code class="language-plaintext highlighter-rouge">pidfd_open</code> system call along with the <code class="language-plaintext highlighter-rouge">CLONE_PIDFD</code> flag</a></li>
+        </ul>
+      </li>
+      <li>File systems and I/O in general:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2128">Add the <code class="language-plaintext highlighter-rouge">close_range</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2125">Add the <code class="language-plaintext highlighter-rouge">fadvise64</code> system call (dummy implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2126">Add the <code class="language-plaintext highlighter-rouge">ioprio_get</code> and <code class="language-plaintext highlighter-rouge">ioprio_set</code> system calls (dummy implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2123">Add the <code class="language-plaintext highlighter-rouge">epoll_pwait2</code> system call</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Enhanced system calls or features:
+    <ul>
+      <li>Processes:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2146">Add <code class="language-plaintext highlighter-rouge">FUTEX_WAKE_OP</code> support for the <code class="language-plaintext highlighter-rouge">futex</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2166">Add <code class="language-plaintext highlighter-rouge">WSTOPPED</code> and <code class="language-plaintext highlighter-rouge">WCONTINUED</code> support to the <code class="language-plaintext highlighter-rouge">wait4</code> and <code class="language-plaintext highlighter-rouge">waitpid</code> system calls</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2215">Add more fields in <code class="language-plaintext highlighter-rouge">/proc/*/stat</code> and <code class="language-plaintext highlighter-rouge">/proc/*/status</code></a></li>
+        </ul>
+      </li>
+      <li>File systems and I/O in general:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2127">Add a few more features for the <code class="language-plaintext highlighter-rouge">statx</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2230">Fix partial writes and reads in writev and readv</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2267">Introduce <code class="language-plaintext highlighter-rouge">FsType</code> and <code class="language-plaintext highlighter-rouge">FsRegistry</code></a></li>
+        </ul>
+      </li>
+      <li>Sockets and network:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2176">Enable UNIX sockets to send and receive file descriptors</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2268">Support <code class="language-plaintext highlighter-rouge">SO_PASSCRED</code> &amp; <code class="language-plaintext highlighter-rouge">SCM_CREDENTIALS</code> &amp; <code class="language-plaintext highlighter-rouge">SOCK_SEQPACKET</code> for UNIX sockets</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2109">Add <code class="language-plaintext highlighter-rouge">NETLINK_KOBJECT_UEVENT</code> support for netlink sockets (a partial implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2192">Support some missing socket options for UNIX stream sockets</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2155">Truncate netlink messages when the user-space buffer is full</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2277">Fix the networking address reusing behavior (<code class="language-plaintext highlighter-rouge">SO_REUSEADDR</code>)</a></li>
+        </ul>
+      </li>
+      <li>Security:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2121">Add basic cgroupfs implementation</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>New device support:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2054">Add basic i8042 keyboard support</a></li>
+    </ul>
+  </li>
+  <li>Enhanced device support:
+    <ul>
+      <li>TTY
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2108">Refactor the TTY abstraction to support multiple I/O devices correctly</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2210">Enhance the framebuffer console to support ANSI escape sequences</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Test infrastructure:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2053">Introduce the system call tests from LTP</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2101">Use Nix to build initramfs</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="ostd--osdk">OSTD &amp; OSDK</h2>
+
+<p>We have made the following key changes to OSTD:</p>
+
+<ul>
+  <li>CPU architectures:
+    <ul>
+      <li>x86-64:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2219">Refactor floating-point context management in context switching and signal handling</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2271">Use iret instead of sysret if the context is not clean</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2091">Don’t treat APIC IDs as CPU IDs</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2273">Fix some CPUID problems and add support for AMD CPUs</a></li>
+        </ul>
+      </li>
+      <li>RISC-V:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2044">Add RISC-V timer support</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2113">Parse device tree for RISC-V ISA extensions</a></li>
+        </ul>
+      </li>
+      <li>LoongArch:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2260">Add the initial LoongArch support</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>CPU:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2036">Add support for dynamically‌-allocated CPU-local objects</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2171">Require <code class="language-plaintext highlighter-rouge">T: Send</code> for <code class="language-plaintext highlighter-rouge">CpuLocal&lt;T, S&gt;</code></a></li>
+    </ul>
+  </li>
+  <li>Memory management:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/1948">Adopt a two-phase locking scheme for page tables</a></li>
+    </ul>
+  </li>
+  <li>Trap handling:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2107">Create <code class="language-plaintext highlighter-rouge">IrqChip</code> abstraction</a></li>
+    </ul>
+  </li>
+  <li>Task and scheduling:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2284">Rewrite the Rust doc of OSTD’s scheduling module</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2052">Fix the race between enabling IRQs and halting CPU</a></li>
+    </ul>
+  </li>
+  <li>Test infrastructure:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2218">Add CI to check documentation and publish API documentation to a self-host website</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>We have made the following key changes to OSDK:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2203">Add OSDK’s code coverage feature</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2168">Support <code class="language-plaintext highlighter-rouge">cargo osdk test</code> for RISC-V</a></li>
+</ul>
+
+<h2 id="contributors">Contributors</h2>
+
+<p>This release was made possible by contributions from 21 individuals. Thank you for your amazing work!</p>
+
+<ul>
+  <li>Ruihan Li (81 commits)</li>
+  <li>Qingsong Chen (31 commits)</li>
+  <li>jiangjianfeng (29 commits)</li>
+  <li>王英泰 (28 commits)</li>
+  <li>Chen Chengjun (24 commits)</li>
+  <li>Zhang Junyang (24 commits)</li>
+  <li>Wang Siyuan (16 commits)</li>
+  <li>Marsman1996 (13 commits)</li>
+  <li>Cautreoxit (8 commits)</li>
+  <li>Hsy-Intel (6 commits)</li>
+  <li>Zejun Zhao (5 commits)</li>
+  <li>Yang Zhichao (4 commits)</li>
+  <li>Hongliang Tian (3 commits)</li>
+  <li>js2xxx (3 commits)</li>
+  <li>Wei Zhang (2 commits)</li>
+  <li>Yuke Peng (2 commits)</li>
+  <li>Philipp Schuster (1 commit)</li>
+  <li>Ruize Tang (1 commit)</li>
+  <li>YanWQ-monad (1 commit)</li>
+  <li>stuuupidcat (1 commit)</li>
+  <li>yuankunzhang (1 commit)</li>
+</ul>
+
+<hr />
+
+<p>We’re incredibly proud of the progress made in Asterinas 0.16.0 and are excited about the new possibilities these changes unlock. We encourage you to explore the new features and contribute to the ongoing development!</p>]]></content><author><name>Hongliang Tian</name></author><summary type="html"><![CDATA[The Asterinas community is happy to announce a new version of Asterinas, 0.16.0!]]></summary></entry><entry><title type="html">Kernel Memory Safety: Mission Accomplished</title><link href="http://0.0.0.0:4000/2025/06/04/kernel-memory-safety-mission-accomplished.html" rel="alternate" type="text/html" title="Kernel Memory Safety: Mission Accomplished" /><published>2025-06-04T09:00:00+00:00</published><updated>2025-06-04T09:00:00+00:00</updated><id>http://0.0.0.0:4000/2025/06/04/kernel-memory-safety-mission-accomplished</id><content type="html" xml:base="http://0.0.0.0:4000/2025/06/04/kernel-memory-safety-mission-accomplished.html"><![CDATA[<p>(Forword: This post distills our research paper <em>Asterinas: A Linux ABI-Compatible, Rust-Based Framekernel OS with a Small and Sound TCB</em>, which is to be published at <a href="https://www.usenix.org/conference/atc25/technical-sessions">USENIX ATC 2025</a>. The preprint can be found on <a href="https://arxiv.org/abs/2506.03876">arXiv</a>.)</p>
+
+<p>Less than one year ago, on July 19, 2024, millions of Windows desktops, servers, and devices suddenly crashed with the infamous “blue screen of death”. This global incident—now known as <a href="https://en.wikipedia.org/wiki/2024_CrowdStrike-related_IT_outages">the CrowdStrike outage</a>—was triggered by a memory-safety bug in a Windows driver: an out-of-bounds access. It was a sobering reminder that even mature, commercial off-the-shelf operating systems (OSes) like Windows and Linux remain vulnerable to memory-safety flaws.</p>
+
+<p>Two years before the CrowdStrike outage, around mid-2022, we began asking: <strong>could Rust finally solve the problem of kernel memory safety?</strong> Not partially. Not with guardrails. But completely.</p>
+
+<p>That was when we came up with this idea of a new OS architecture called <strong>framekernel</strong>, designed to unlock the full potential of Rust by confining <code class="language-plaintext highlighter-rouge">unsafe</code> code to a minimal, auditable scope within the kernel. The idea was bold but simple:</p>
+
+<blockquote>
+  <p>What if we could build an entire OS kernel where <strong>everything but a small trusted core is written in safe Rust</strong>?</p>
+</blockquote>
+
+<p>From this idea, <a href="https://github.com/asterinas/asterinas"><strong>the Asterinas project</strong></a> was born—the first real-world implementation of a framekernel. We didn’t know if it would work.</p>
+
+<ol>
+  <li>How <em>small</em> can the TCB be?</li>
+  <li>Is this too restrictive for <em>rich</em> OS features?</li>
+  <li>Would <em>performance</em> suffer?</li>
+  <li>Are memory-safety <em>bugs</em> really gone?</li>
+</ol>
+
+<p>After three years of development and over 100,000 lines of Rust, Asterinas has grown from a research prototype into a maturing system—with real-world use on the horizon. We’ve seen enough, built enough, and tested enough to say this with confidence:</p>
+
+<blockquote>
+  <p>Kernel memory safety has been accomplished — with no compromises.</p>
+</blockquote>
+
+<p>We proved that an OS kernel with rich functionality, Linux compatibility, and competitive performance can be built entirely in safe Rust, atop a small and sound OS framework. We built such a framework, which is called <strong>OSTD</strong>.</p>
+
+<p>In this post, we’ll give you a lightning tour of the framekernel architecture—and show how OSTD and Asterinas brings it to life.</p>
+
+<h2 id="framekernel-101">Framekernel 101</h2>
+
+<p>The framekernel combines the best of both worlds:</p>
+
+<blockquote>
+  <p>The performance of a monolithic kernel and the security of a microkernel.</p>
+</blockquote>
+
+<p>A framekernel lives in a single address space (like a monolithic kernel), but is <strong>logically partitioned</strong>:</p>
+
+<ul>
+  <li>The <strong><em>privileged</em> OS framework</strong> is a small, rigorously-verified mix of safe and unsafe Rust code that encapsulates low-level, unsafe operations into high-level, safe abstractions.</li>
+  <li>The <strong><em>de-privileged</em> OS services</strong>, written entirely in safe Rust atop the framework’s abstractions, implement the bulk of OS functionality—device drivers, filesystems, networking, and more.</li>
+</ul>
+
+<p>This <strong>language-based, intra-kernel privilege separation</strong> means that the memory safety of the entire OS kernel only depends on the correctness of the tiny privileged OS framework. Communication between different parts of the OS remains fast—via ordinary function calls and shared memory—preserving monolithic speed while enabling microkernel-like safety.</p>
+
+<p>A comparison between the three OS architectures is summarized in the following figure (extracted from the paper):</p>
+
+<p><img src="/assets/images/monolithic-kernel-vs-microkernel-vs-framekernel.png" alt="Kernel Architecture Comparison" />
+(TCB is short for Trusted Computing Base, which is the code responsible for kernel memory safety.)</p>
+
+<h2 id="your-hello-world-framekernel">Your “Hello, World” Framekernel</h2>
+
+<p>Let’s see a real example: handling system calls.</p>
+
+<p>As mentioned, the OS framework for Asterinas is called OSTD. We position it as Rust’s (unofficial) standard library for OS development, and it has been published to <a href="https://crates.io/crates/ostd">crates.io</a>. OSTD has been used for developing Asterinas and may be used for more Rust-based OSes. The following diagram (extracted from the paper) shows how system call loop may be written entirely in safe Rust using the API of OSTD.</p>
+
+<p><img src="/assets/images/handling-system-calls-with-ostd.png" alt="Handling System Calls with OSTD" /></p>
+
+<p>This example uses four safe abstractions from OSTD:</p>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">Task</code></strong> – Handles context switching and kernel stacks.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">UserMode</code></strong> – Allows the CPU to execute in the user mode until an event occurs.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">UserContext</code></strong> – Manipulates the user-mode CPU state such as general-purpose registers.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">VmSpace</code></strong> – Manages user virtual memory safely.</li>
+</ol>
+
+<p>All these abstractions wrap <code class="language-plaintext highlighter-rouge">unsafe</code> Rust code behind safe and sound APIs. The result: developing a Rust kernel can be as safe and productive as doing Rust applications.</p>
+
+<p>For a fully working example, check out this sample project: <a href="https://asterinas.github.io/book/ostd/a-100-line-kernel.html">Write a Hello World kernel in 100 lines of safe Rust</a>.</p>
+
+<h2 id="soundness-is-hardbut-possible">Soundness Is Hard—But Possible</h2>
+
+<p>Rust’s promise of memory safety means <strong>no <a href="https://doc.rust-lang.org/reference/behavior-considered-undefined.html">undefined behaviors (UBs)</a></strong>. But UBs in a kernel aren’t just a language issue—they can stem from:</p>
+
+<ul>
+  <li>Compromised CPU states</li>
+  <li>Bad page tables</li>
+  <li>Corrupted stack</li>
+  <li>Faulty DMA devices</li>
+  <li>And more…</li>
+</ul>
+
+<p>To uphold Rust’s guarantees, the TCB (i.e., OSTD) must defend against all of these threats. Even in the presence of hostile user programs, buggy drivers, or malicious peripherals, OSTD must ensure the absence of undefined behavior (UB)—a property known in Rust as <strong>soundness</strong>.</p>
+
+<p>We achieve soundness by:</p>
+<ul>
+  <li>Defining strict safety invariants for OSTD’s APIs</li>
+  <li>Using MMU and IOMMU hardware enforcement</li>
+  <li>Reviewing <code class="language-plaintext highlighter-rouge">unsafe</code> code rigorously</li>
+  <li>Running Miri (a Rust UB detector) on kernel code, with kernel-specific adaptations</li>
+</ul>
+
+<p>More details can be found in the paper.</p>
+
+<p>Thanks to the small TCB, the memory safety of the entire Asterinas framekernel is amenable to formal verification. Our goal is to verify all critical modules in OSTD using <a href="https://github.com/verus-lang/verus">Verus</a>. You can track our current progress in <a href="https://asterinas.github.io/2025/02/13/towards-practical-formal-verification-for-a-general-purpose-os-in-rust.html">a previous blog post</a>.</p>
+
+<h2 id="a-vision-becomes-reality">A Vision Becomes Reality</h2>
+
+<p>After three years of development, we can now answer our original questions:</p>
+
+<blockquote>
+  <p>How <em>small</em> can the TCB be?</p>
+</blockquote>
+
+<p>Our TCB (OSTD) is approximately 15,000 lines of code—just 14% of the whole Asterinas kernel. In absolute terms, this is comparable to verified microkernels like <a href="https://dl.acm.org/doi/10.1145/2560537">seL4</a> (~10K LoC), while commodity monolithic kernels (including <a href="https://www.usenix.org/conference/atc24/presentation/li-hongyu">Rust for Linux</a>) have TCBs that are orders of magnitude larger. Relatively speaking, Asterinas also outperforms other Rust-based OSes: <a href="https://github.com/tock/tock">Tock</a> (43%), <a href="https://github.com/mars-research/redleaf">RedLeaf</a> (66%), and <a href="https://github.com/theseus-os/Theseus">Theseus</a> (62%) all have significantly larger TCB proportions.</p>
+
+<blockquote>
+  <p>Is this too restrictive for <em>rich</em> OS features?</p>
+</blockquote>
+
+<p>No. Currently, Asterinas supports:</p>
+
+<ul>
+  <li>210+ Linux system calls</li>
+  <li>x86-64 &amp; RISC-V CPU architectures</li>
+  <li>Various file systems: Ext2, RamFS, SysFS, and OverlayFS</li>
+  <li>Multiple sockets: TCP, UDP, Unix, and Netlink</li>
+  <li>Multiple devices: Virtio, NVMe, and USB</li>
+</ul>
+
+<p>Working in safe Rust is like dancing in chains: the constraints are real, but with enough discipline, the dance is still graceful.</p>
+
+<blockquote>
+  <p>Would <em>performance</em> suffer?</p>
+</blockquote>
+
+<p>Minimal. Asterinas is highly optimized, matching Linux’s performance on the syscall-intensive <a href="https://github.com/intel/lmbench">LMbench</a> microbenchmarks in the single-core setting. Multi-core scalability is actively being improved. Perhaps the biggest performance challenge we faced is efficient IOMMU management—a hurdle we overcame with a static mapping strategy.</p>
+
+<blockquote>
+  <p>Are memory-safety <em>bugs</em> really gone?</p>
+</blockquote>
+
+<p>Almost. Asterinas contributors build features in <strong>100% safe Rust</strong>. Only OSTD developers touch <code class="language-plaintext highlighter-rouge">unsafe</code>, which is thoroughly reviewed and verified. Combined with <strong>Miri</strong> and <strong>Verus</strong>, the result is a kernel in which we have great confidence.</p>
+
+<h2 id="this-is-just-the-beginning">This Is Just the Beginning</h2>
+
+<p>The framekernel architecture proves that memory-safe OSes aren’t just possible—they’re practical. <strong>Asterinas is living proof.</strong></p>
+
+<p>But this is just the beginning.</p>
+
+<p>Now that memory safety is effectively solved, we can shift our focus to bugs beyond safety. For example, <strong>Converos</strong>—another project from the Asterinas community and <a href="https://www.usenix.org/conference/atc25/technical-sessions">published at USENIX ATC 2025</a>—demonstrates how model checking can uncover hard-to-find concurrency bugs in Asterinas. Looking ahead, we envision leveraging Rust’s strong, expressive type system to prevent logic errors and enable lightweight formal verification of critical OS properties. This direction is also <a href="https://arxiv.org/pdf/2501.00248">being explored by other Rust OS developers</a>.</p>
+
+<p>As a relatively new kernel, Asterinas is not yet production-ready. In 2025, we will add support for Linux namespaces and cgroups—key features for server applications. We’re also working on a graphics subsystem to enable desktop scenarios. Before year’s end, we aim to complete a comprehensive device model. Support for the ARM architecture is planned as well.</p>
+
+<p>Asterinas is an open-source project, and we welcome contributors of all kinds—developers, documenters, driver writers, testers—your help is invaluable. Head over now to star the repo and get involved:
+<a href="https://github.com/asterinas/asterinas">https://github.com/asterinas/asterinas</a></p>
+
+<p>Let’s make memory safety the new standard—together.</p>]]></content><author><name>Hongliang Tian</name></author><summary type="html"><![CDATA[(Forword: This post distills our research paper Asterinas: A Linux ABI-Compatible, Rust-Based Framekernel OS with a Small and Sound TCB, which is to be published at USENIX ATC 2025. The preprint can be found on arXiv.)]]></summary></entry><entry><title type="html">Towards Practical Formal Verification for a General-Purpose OS in Rust</title><link href="http://0.0.0.0:4000/2025/02/13/towards-practical-formal-verification-for-a-general-purpose-os-in-rust.html" rel="alternate" type="text/html" title="Towards Practical Formal Verification for a General-Purpose OS in Rust" /><published>2025-02-13T09:00:00+00:00</published><updated>2025-02-13T09:00:00+00:00</updated><id>http://0.0.0.0:4000/2025/02/13/towards-practical-formal-verification-for-a-general-purpose-os-in-rust</id><content type="html" xml:base="http://0.0.0.0:4000/2025/02/13/towards-practical-formal-verification-for-a-general-purpose-os-in-rust.html"><![CDATA[<p>Historically, formal verification has largely focused on specialized, verification-friendly operating systems (OSes) such as <a href="https://github.com/seL4/l4v">seL4</a>, <a href="http://flint.cs.yale.edu/certikos/">CertiKOS</a>, <a href="https://www.microsoft.com/en-us/research/publication/safe-to-the-last-instruction-automated-verification-of-a-type-safe-operating-system/">Verve</a>, and <a href="https://dl.acm.org/doi/10.1145/3625275.3625401">Atmosphere</a>. These OSes are deliberately small and often lack many of the common features found in full-fledged, UNIX-style OSes.</p>
+
+<p>With <a href="https://github.com/asterinas/asterinas">Asterinas</a>, we aim to change this status quo by taking the advantage on our <a href="https://asterinas.github.io/book/kernel/the-framekernel-architecture.html">framekernel</a> architecture. Now that the Trusted Computing Base (TCB) has been made so small, verifying only a relatively small portion of Rust code (with <code class="language-plaintext highlighter-rouge">unsafe</code>) can guarantee the memory safety of the entire kernel.</p>
+
+<p>Over the past year, we, the Asterinas community, has collaborated with <a href="https://www.certik.com/">CertiK</a>, an industry leader in formal verification for security-critical systems, to verify a critical component of Asterinas’s TCB: the page management module (including page tables). This work is a key milestone in our pursuit of a formally verified TCB.</p>
+
+<p>In this post, we share the initial results of this work-in-progress. Specifically, we will highlight how we have verified Asterinas’s page tables with <a href="https://github.com/verus-lang/verus">Verus</a>. Additional technical details can be found in this <a href="https://github.com/asterinas/slides/blob/f62c764ea9c4831a747dbe8fa415b56e48493482/slides/2025-01-28%20Asterinas%20Security%20Assessment%20by%20CertiK.pdf">report</a> by CertiK. Like the OS itself, the verification code is also <a href="https://github.com/asterinas/vostd">open source</a>.</p>
+
+<h2 id="overview-of-the-page-and-paging-subsystem">Overview of the Page and Paging Subsystem</h2>
+
+<p>The framekernel architecture of Asterinas entails a minimal TCB in terms of memory safety. For Asterinas, the TCB is the <a href="https://asterinas.github.io/book/ostd/index.html">OSTD</a>, a (unofficial) Rust standard library for OS development. OSTD offers a set of safe abstractions enabling the creation of feature-rich, UNIX-style OSes in safe Rust. However, although its API is safe, its implementation is <code class="language-plaintext highlighter-rouge">unsafe</code>, given the need for low-level interactions with hardware - such as managing physical memory pages and page tables.</p>
+
+<p>The page and paging subsystem is organized into a hierarchy of abstractions. From high-level to low-level, these abstractions include:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cd">/// The virtual memory space for a user process.</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">VmSpace</span> <span class="p">{</span>
+    <span class="n">pt</span><span class="p">:</span> <span class="n">PageTable</span><span class="o">&lt;</span><span class="n">UserMode</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="c1">// more ...</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">VmSpace</span> <span class="p">{</span>
+    <span class="cd">/// Provides a cursor to access the specified address range.</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">cursor</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">va</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Range</span><span class="o">&lt;</span><span class="n">Vaddr</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Cursor</span><span class="o">&lt;</span><span class="nv">'_</span><span class="o">&gt;&gt;</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+
+    <span class="cd">/// Provides a cursor to manipulate the specified address range.</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">cursor_mut</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">va</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Range</span><span class="o">&lt;</span><span class="n">Vaddr</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">CursorMut</span><span class="o">&lt;</span><span class="nv">'_</span><span class="p">,</span> <span class="nv">'_</span><span class="o">&gt;&gt;</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cd">/// A generic page table for any target CPU architecture.</span>
+<span class="k">struct</span> <span class="n">PageTable</span><span class="o">&lt;</span>
+    <span class="n">M</span><span class="p">,</span>                        <span class="c1">// Page table mode: user or kernel</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="nn">arch</span><span class="p">::</span><span class="n">PageTableEntry</span><span class="p">,</span> <span class="c1">// CPU arch-specific page table entry</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nn">arch</span><span class="p">::</span><span class="n">PagingConsts</span><span class="p">,</span>   <span class="c1">// CPU arch-specific paging constants</span>
+<span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">RawPageTableNode</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span> <span class="n">C</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">_phantom</span><span class="p">:</span> <span class="n">PhantomData</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="cd">/// The ownership of a page table node.</span>
+<span class="k">struct</span> <span class="n">PageTableNode</span><span class="o">&lt;</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="nn">arch</span><span class="p">::</span><span class="n">PageTableEntry</span><span class="p">,</span> <span class="c1">// CPU arch-specific page table entry</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nn">arch</span><span class="p">::</span><span class="n">PagingConsts</span><span class="p">,</span>   <span class="c1">// CPU arch-specific paging constants</span>
+<span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">page</span><span class="p">:</span> <span class="n">Page</span><span class="o">&lt;</span><span class="n">PageTablePageMeta</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span> <span class="n">C</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="cd">/// The ownership of a physical memory page.</span>
+<span class="k">struct</span> <span class="n">Page</span><span class="o">&lt;</span><span class="n">M</span> <span class="cm">/* The purpose of this page */</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="c1">// Each page is uniquely identified by a metadata slot,</span>
+    <span class="c1">// which contains a reference count and a custom field of `M`.</span>
+    <span class="n">ptr</span><span class="p">:</span> <span class="o">*</span><span class="k">const</span> <span class="n">MetaSlot</span><span class="p">,</span>
+    <span class="n">_marker</span><span class="p">:</span> <span class="n">PhantomData</span><span class="o">&lt;</span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Though simplified, these definitions reflect key design points:</p>
+
+<ol>
+  <li>
+    <p><strong>Separation of user and kernel virtual address spaces.</strong> This separation is crucial for OSTD’s soundness. OSTD safely exposes full control of user virtual memory, but the kernel’s memory space remains private. A mistake in user-space page table manipulation by safe Rust will not compromise the memory safety of the kernel space.</p>
+  </li>
+  <li>
+    <p><strong>Fine-grained locking with cursors.</strong> Page tables are manipulated with <code class="language-plaintext highlighter-rouge">Cursor</code> objects to reduce lock contention. Instead of locking the entire page table, a cursor locks only the page table node containing the current page table entry along with its ancestor nodes.</p>
+  </li>
+  <li>
+    <p><strong>Reference-count-based page management.</strong> Physical pages are tracked through reference-counted <code class="language-plaintext highlighter-rouge">Page&lt;M&gt;</code> objects, ensuring that no physical page is used for conflicting purposes. Each <code class="language-plaintext highlighter-rouge">Page</code> is essentially a specialized <code class="language-plaintext highlighter-rouge">Arc</code>, supporting cheap cloning and reference counting, but without dynamic heap allocation.</p>
+  </li>
+</ol>
+
+<p>Our ultimate goal is to formally verify the correctness and soundness of these abstractions. The diagram below summarizes our verification plan and progress:</p>
+
+<p><img src="/assets/images/2025-02-13-post-verification-overview.png" alt="Verification Overview" /></p>
+
+<p>Within these four layers of abstractions (in blue), we have identified 14 high-priority verification targets, of which 11 (in green) are verified and 3 (in yellow) remain. In total, we have produced roughly 6K lines of specification code and 2K lines of proof code for about 2K lines of executable code.</p>
+
+<p>This formal verification effort vastly boosts our confidence in the kernel. For instance, we have proven that <code class="language-plaintext highlighter-rouge">Cursor</code>-based navigation of page tables is correct (Targets #10 and #11). We have also proven that <code class="language-plaintext highlighter-rouge">Page</code>, as a reference-counted smart pointer, is correct (Targets #1, #3, and #4). During this work, we discovered new bugs, including a race condition that might have allowed a page table node to be freed prematurely.</p>
+
+<h2 id="verification-methodology">Verification Methodology</h2>
+
+<p>We use <a href="https://github.com/verus-lang/verus">Verus</a>, an SMT-based verification tool for native Rust. Our workflow for verifying a new target follows four main steps: <strong>(1) code import</strong>, <strong>(2) initial code proof</strong>, <strong>(3) specification</strong>, and <strong>(4) final code proof</strong>.</p>
+
+<h3 id="code-import">Code Import</h3>
+
+<p>We begin by importing the types and functions to be verified into Verus, along with any simpler dependencies not yet verified. Complex dependencies are replaced with stubs and functional specifications, which will be refined later.</p>
+
+<h3 id="initial-code-proof">Initial Code Proof</h3>
+
+<p>Next, we run Verus on the code as-is, and it often flags potential buggy code or unsafe behaviors. For example, consider this function:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="k">fn</span> <span class="nf">align_down</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span> <span class="p">{</span>
+   <span class="n">x</span> <span class="o">&amp;</span> <span class="o">!</span><span class="p">(</span><span class="n">align</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Verus may complain about possible overflow when <code class="language-plaintext highlighter-rouge">align</code> is zero, prompting a precondition:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="k">fn</span> <span class="nf">align_down</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">usize</span>
+   <span class="n">requires</span>
+       <span class="n">align</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="p">{</span> <span class="cm">/*...*/</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Verus uses an SMT solver to detect such edge cases. The <code class="language-plaintext highlighter-rouge">requires</code> clause here ensures that no overflow occurs by prohibiting <code class="language-plaintext highlighter-rouge">align == 0</code>. These fixes yield strong safety guarantees right from the start.</p>
+
+<h3 id="specification">Specification</h3>
+
+<p>We then formalize what a function must do by writing a specification, often through a boolean expression relating the return value to its inputs or via a relational spec referencing an abstract model:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="k">fn</span> <span class="nf">align_down</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">align</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="p">(</span><span class="n">res</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span>
+   <span class="n">requires</span>
+       <span class="n">align</span> <span class="o">&gt;</span> <span class="mi">0</span>
+   <span class="n">ensures</span>
+       <span class="n">res</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">,</span>
+       <span class="n">res</span> <span class="o">%</span> <span class="n">align</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>If Verus cannot automatically prove these properties, we add assertions, lemmas, or additional preconditions to guide it.</p>
+
+<h3 id="final-code-proof">Final Code Proof</h3>
+
+<p>Sometimes, complex loops or recursive functions require us to “sketch” a proof with placeholders that we fill in later. Once those placeholders are proven, we finalize the verification.</p>
+
+<h2 id="example-verifying-the-cursor-api">Example: Verifying the <code class="language-plaintext highlighter-rouge">Cursor</code> API</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Cursor</code> abstraction is an excellent example of <em>relational</em> proofs in Verus:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">struct</span> <span class="n">Cursor</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="n">PageTableMode</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="n">guards</span><span class="p">:</span> <span class="p">[</span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">PageTableNode</span><span class="o">&gt;</span><span class="p">;</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">PagingLevel</span><span class="p">,</span>
+    <span class="n">guard_level</span><span class="p">:</span> <span class="n">PagingLevel</span><span class="p">,</span>
+    <span class="n">va</span><span class="p">:</span> <span class="n">Vaddr</span><span class="p">,</span>
+    <span class="n">barrier_va</span><span class="p">:</span> <span class="n">Range</span><span class="o">&lt;</span><span class="n">Vaddr</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">Cursor</code> stores the current virtual address (<code class="language-plaintext highlighter-rouge">va</code>), the corresponding level in the page table hierarchy (<code class="language-plaintext highlighter-rouge">level</code>), and an array of locks (<code class="language-plaintext highlighter-rouge">guards</code>). However, to reason about correctness, we need an abstract model describing what the cursor “really” represents. For that, we introduce the <code class="language-plaintext highlighter-rouge">ConcreteCursor</code>:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="n">tracked</span> <span class="k">struct</span> <span class="n">ConcreteCursor</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">tracked</span> <span class="n">tree</span><span class="p">:</span> <span class="n">PageTableTreeModel</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">tracked</span> <span class="n">locked_subtree</span><span class="p">:</span> <span class="n">PageTableNodeModel</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">tracked</span> <span class="n">path</span><span class="p">:</span> <span class="n">PageTableTreePathModel</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>(<code class="language-plaintext highlighter-rouge">tracked</code> objects are used for verification but dropped at compilation time.)</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">ConcreteCursor</code> carries:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tree</code>: A model of the entire page table.</li>
+  <li><code class="language-plaintext highlighter-rouge">locked_subtree</code>: The node (and subtree) currently locked.</li>
+  <li><code class="language-plaintext highlighter-rouge">path</code>: A sequence of indices from the root to the current node.</li>
+</ul>
+
+<p>We connect <code class="language-plaintext highlighter-rouge">Cursor</code> to <code class="language-plaintext highlighter-rouge">ConcreteCursor</code> with <code class="language-plaintext highlighter-rouge">Cursor::relate()</code>, which checks, for instance, that <code class="language-plaintext highlighter-rouge">self.va</code> and <code class="language-plaintext highlighter-rouge">self.level</code> match <code class="language-plaintext highlighter-rouge">model.path.vaddr()</code> and the path length in <code class="language-plaintext highlighter-rouge">model</code>.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="k">pub</span> <span class="n">open</span> <span class="n">spec</span> <span class="k">fn</span> <span class="nf">relate</span><span class="p">(</span><span class="k">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">ConcreteCursor</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span>
+       <span class="n">recommends</span>
+           <span class="n">model</span><span class="nf">.inv</span><span class="p">(),</span>
+   <span class="p">{</span>
+   <span class="o">&amp;&amp;&amp;</span> <span class="k">self</span><span class="py">.level</span> <span class="o">==</span> <span class="nf">NR_LEVELS</span><span class="p">()</span> <span class="o">-</span> <span class="n">model</span><span class="py">.path</span><span class="nf">.len</span><span class="p">()</span>
+   <span class="o">&amp;&amp;&amp;</span> <span class="k">self</span><span class="py">.va</span> <span class="o">==</span> <span class="n">model</span><span class="py">.path</span><span class="nf">.vaddr</span><span class="p">()</span>
+   <span class="o">&amp;&amp;&amp;</span> <span class="k">self</span><span class="nf">.relate_locked_region</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+   <span class="p">}</span>
+</code></pre></div></div>
+
+<p>(In Verus, <code class="language-plaintext highlighter-rouge">&amp;&amp;&amp;</code> is the “bulleted list” form of logical and, <code class="language-plaintext highlighter-rouge">&amp;&amp;</code>.)</p>
+
+<p>Suppose that we want to specify the <code class="language-plaintext highlighter-rouge">Cursor::pop_level()</code> function, which moves the cursor one level up. To do so, we define a specification that removes the last index from the <code class="language-plaintext highlighter-rouge">path</code>:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="n">open</span> <span class="n">spec</span> <span class="k">fn</span> <span class="nf">pop_level_spec</span><span class="p">(</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ConcreteCursor</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="n">popped</span><span class="p">)</span> <span class="o">=</span> <span class="k">self</span><span class="py">.path.inner</span><span class="nf">.pop_tail</span><span class="p">();</span>
+    <span class="n">ConcreteCursor</span> <span class="p">{</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">PageTableTreePathModel</span> <span class="p">{</span>
+            <span class="n">inner</span><span class="p">:</span> <span class="n">popped</span>
+        <span class="p">},</span>
+        <span class="o">..</span><span class="k">self</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And we prove the implementation matches this spec:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">pop_level</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="nf">Tracked</span><span class="p">(</span><span class="n">model</span><span class="p">):</span> <span class="n">Tracked</span><span class="o">&lt;&amp;</span><span class="n">ConcreteCursor</span><span class="o">&gt;</span><span class="p">)</span>
+    <span class="n">requires</span>
+        <span class="nf">old</span><span class="p">(</span><span class="k">self</span><span class="p">)</span><span class="nf">.inv</span><span class="p">(),</span>
+        <span class="n">model</span><span class="nf">.inv</span><span class="p">(),</span>
+        <span class="nf">old</span><span class="p">(</span><span class="k">self</span><span class="p">)</span><span class="nf">.relate</span><span class="p">(</span><span class="o">*</span><span class="n">model</span><span class="p">),</span>
+        <span class="c1">// ...</span>
+    <span class="n">ensures</span>
+        <span class="k">self</span><span class="nf">.inv</span><span class="p">(),</span>
+        <span class="k">self</span><span class="nf">.relate</span><span class="p">(</span><span class="n">model</span><span class="nf">.pop_level_spec</span><span class="p">()),</span>
+<span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If the old cursor relates to <code class="language-plaintext highlighter-rouge">model</code>, then after calling <code class="language-plaintext highlighter-rouge">pop_level()</code>, the new cursor must relate to <code class="language-plaintext highlighter-rouge">model.pop_level_spec()</code>. You can find the full code and proof for this and other cursor functions <a href="https://github.com/asterinas/vostd/blob/cd00ac386e3e961691f3b776bf749b3c8bea02e5/fvt10-pt-cursor-navigation/src/page_table/cursor/mod.rs">here</a>.</p>
+
+<h2 id="refinement-invariants">Refinement Invariants</h2>
+
+<p>This style of proof underpins the functional correctness of many of our verification targets and will form the basis of a broader refinement proof, ensuring consistency across different levels of the page table.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">PageTableTreeModel</code></strong> describes the structure of the page table for low-level memory management.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">PageTableFlatModel</code></strong> offers a high-level view: a mapping from virtual addresses to physical pages.</li>
+</ul>
+
+<p>We prove that the concrete model (“tree”) refines the flat model by maintaining invariants after each update. These invariants ensure that traversing the page table is always sound. Even when the underlying code uses <code class="language-plaintext highlighter-rouge">unsafe</code>, the proven invariants guarantee its safety.</p>
+
+<h2 id="future-plans">Future Plans</h2>
+
+<p>Our ongoing work to build a formally verified, general-purpose OS raises several open questions:</p>
+
+<ul>
+  <li>
+    <p><strong>Concurrency.</strong> A key challenge is simplifying the verification of concurrent Rust code, particularly when multiple threads or CPU cores manipulate shared data structures like page tables. The recent progress on <a href="https://www.cs.utexas.edu/~hleblanc/pdfs/verus.pdf">VerusSync</a> — a permission-based (token-based) toolkit for concurrency verification — offers promising solutions. By enforcing permissions for specific virtual address ranges when multiple threads operate on <code class="language-plaintext highlighter-rouge">VmSpace</code> through <code class="language-plaintext highlighter-rouge">Cursor</code>s, concurrency proofs can become nearly as straightforward as their sequential counterparts.</p>
+  </li>
+  <li>
+    <p><strong>Evolution.</strong> Keeping verification artifacts in sync with an evolving codebase remains a persistent concern. At present, we lack the tool to seamlessly link Verus-verified binaries with the rest of the kernel, which can lead to potential discrepancies. Additionally, Verus still lacks support for certain Rust features, such as <a href="https://doc.rust-lang.org/std/ptr/struct.DynMetadata.html">manually-managed trait objects</a> — recently introduced in Asterinas for the automatic page type system. Striking the right balance between verifiability and ease of kernel development is an ongoing question.</p>
+  </li>
+  <li>
+    <p><strong>Community.</strong> Finally, we aim to grow a broader community of systems developers willing to engage in formal verification. Much work remains to make our infrastructure more accessible to contributors unfamiliar with verification techniques. Improving documentation, tooling, and training resources will be essential for lowering the barrier to entry and encouraging more developers to join our efforts.</p>
+  </li>
+</ul>
+
+<p>With the combined strengths of Rust, Verus, and framekernels, we believe it is possible to create large-scale, general-purpose OSes with unprecedented assurance. If you’re interested in contributing or learning more, check out our GitHub repositories (<a href="https://github.com/asterinas/asterinas">OS code</a> and <a href="https://github.com/asterinas/vostd">verification code</a>) and join the community discussions!</p>]]></content><author><name>CertiK and Hongliang Tian</name></author><summary type="html"><![CDATA[Historically, formal verification has largely focused on specialized, verification-friendly operating systems (OSes) such as seL4, CertiKOS, Verve, and Atmosphere. These OSes are deliberately small and often lack many of the common features found in full-fledged, UNIX-style OSes.]]></summary></entry><entry><title type="html">Asterinas in 2024</title><link href="http://0.0.0.0:4000/2025/01/20/asterinas-in-2024.html" rel="alternate" type="text/html" title="Asterinas in 2024" /><published>2025-01-20T02:27:24+00:00</published><updated>2025-01-20T02:27:24+00:00</updated><id>http://0.0.0.0:4000/2025/01/20/asterinas-in-2024</id><content type="html" xml:base="http://0.0.0.0:4000/2025/01/20/asterinas-in-2024.html"><![CDATA[<p><strong>Happy New Year and the upcoming Lunar New Year!</strong> I wish everyone a wonderful and fruitful 2025.</p>
+
+<p>The blog section of the Asterinas website has existed since day one, yet we’ve been so busy making great technical progress that we haven’t written a single post—until now! One of my New Year’s resolutions, as the maintainer of Asterinas, is to encourage community members to share their thoughts and progress more regularly. Now that we have entered 2025, I think this is the perfect time to look back on our achievements of 2024 and write the very first official Asterinas blog post!</p>
+
+<p>In this post, I’d like to summarize the amazing progress we made in 2024.</p>
+
+<h2 id="what-we-achieved">What We Achieved</h2>
+
+<p>In January 2024, we felt that the Asterinas project had grown mature enough to share with the rest of the world. So, we made it open source! As a result, 2024 was our first year as an open-source project.</p>
+
+<p>In 2024, we’ve introduced a range of enhancements that boost productivity, expand functionality, optimize performance, and strengthen system safety. Let’s take a closer look.</p>
+
+<!-- Insert a transition paragraph to introduce the followinfg key aspects of improvements -->
+
+<!--
+Here is a quick snapshot of our progress in numbers:
+
+| Metric                 | Total  | Added in 2024  |
+|------------------------|--------|----------------|
+| **Commits**        | 1909   | +1000          |
+| **PRs**            | 1000   | +XXX           |
+| **Issues**         | 600    | +XXX           |
+| **Contributors**   | 50     | +XXX           |
+
+While these numbers highlight our growth, they only scratch the surface of what Asterinas has accomplished. Beyond raw statistics, our community has introduced major improvements over various aspects.
+-->
+
+<h3 id="productivity-boosted">Productivity Boosted</h3>
+
+<p>We believe that the happiness of OS developers is crucial to Asterinas’s success. Developers deserve better languages (Rust), better APIs (OSTD), and better tooling (OSDK). That’s why we created and published <a href="https://crates.io/crates/ostd">OSTD</a> and <a href="https://crates.io/crates/cargo-osdk">OSDK</a> on crates.io. Asterinas has been built with the OSTD and OSDK; your kernels can, too!</p>
+
+<ul>
+  <li><strong>OSTD</strong> is the (unofficial) standard library for Rust OS development. It provides <a href="https://docs.rs/ostd/latest/ostd/">a small set of safe APIs</a> that are <em>powerful</em> enough to write general-purpose, UNIX-style OS kernels in safe Rust.</li>
+  <li><strong>OSDK</strong> is a Cargo subcommand that streamlines the workflow of Rust OS projects based on OSTD. With OSDK, you can create, build, and test Rust OS projects just as easily as you do regular Rust applications with Cargo. It even includes built-in support for <a href="https://asterinas.github.io/book/osdk/reference/commands/debug.html">debugging kernels in a VM</a> and <a href="https://asterinas.github.io/book/osdk/reference/commands/profile.html">profiling kernels via sampling</a>.</li>
+</ul>
+
+<h3 id="functionality-enriched">Functionality Enriched</h3>
+
+<p>Asterinas now provides <a href="https://asterinas.github.io/book/kernel/linux-compatibility.html">over 180 Linux system calls</a>, with about 60 added in 2024. On Intel x86 machines, we introduced <a href="https://asterinas.github.io/book/kernel/intel_tdx.html">Intel TDX support</a>, making Asterinas a viable guest OS for TDX-based Confidential VMs. We also laid the groundwork for RISC-V CPU architecture support, broadening Asterinas’s hardware compatibility.</p>
+
+<h3 id="performance-optimized">Performance Optimized</h3>
+
+<p>We invested a great deal of effort in pinpointing and resolving performance bottlenecks. To measure our progress, we established the <a href="https://github.com/asterinas/asterinas/tree/main/test/benchmark">Asterinas Benchmark Collection</a>, which runs various benchmarks nightly and compares Asterinas’s normalized performance against Linux. We’re proud to say that in single-core settings, Asterinas’s performance is on par with Linux in benchmarks like <a href="https://asterinas.github.io/benchmark/lmbench/">LMbench</a>. In 2025, we will turn our attention to optimizing performance for SMP (Symmetric Multiprocessing) environments.</p>
+
+<h3 id="safety-enhanced">Safety Enhanced</h3>
+
+<p>Asterinas’s signature <a href="https://asterinas.github.io/book/kernel/the-framekernel-architecture.html">framekernel</a> OS architecture promises a small and sound trusted computing base (TCB) for kernel memory safety. To further ensure robustness, we collaborated with <a href="https://www.certik.com/">CertiK</a> for code auditing and formal verification of OSTD’s memory management module—an area that relies heavily on unsafe code. This joint effort has boosted our confidence in the soundness of OSTD and, by extension, Asterinas.</p>
+
+<h3 id="papers-published">Papers Published</h3>
+
+<p>We describe the design principles of our novel framekernel OS architecture in two research papers:</p>
+<ul>
+  <li>A short-paper version published at <a href="https://dl.acm.org/doi/10.1145/3678015.3680492">APSys’24</a>.</li>
+  <li>A full-paper version, currently under submission, which will soon be posted on arXiv for preview.</li>
+</ul>
+
+<h2 id="2025-roadmap">2025 Roadmap</h2>
+
+<p>We’ll be spinning up our 2025 roadmap process in the very near future – stay tuned! If you’d like to get involved or contribute ideas, keep an eye on our GitHub repository and this blog.</p>
+
+<h2 id="thank-you">Thank You</h2>
+
+<p>We feel incredibly fortunate to have welcomed contributions from <a href="https://asterinas.github.io/contributors.html">over 50 individuals</a> so far. In this post, I’d like to specifically recognize the top 10 contributors of 2024 (by contribution score). It has been both an honor and a pleasure to collaborate with all of you, and our achievements this past year would not have been possible without your dedication. Please join me in thanking this outstanding group of contributors!</p>
+
+<ol>
+  <li>
+    <p><strong><a href="https://github.com/junyang-zh">Junyang Zhang</a></strong><br />
+For leading the development of OSDK and the memory management module of OSTD.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/lrh2000">Ruihan Li</a></strong><br />
+For doing an excellent job in refactoring the network subsystem and demonstrating a steadfast commitment to enhancing code quality.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/StevenJiang1110">Jianfeng Jiang</a></strong><br />
+For tackling some challenging heavy lifts in optimizing sockets and the virtio-net driver.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/cchanging">Chengjun Chen</a></strong><br />
+For incredible work on optimizing memory- and process-management system calls such as <code class="language-plaintext highlighter-rouge">mmap</code> and <code class="language-plaintext highlighter-rouge">fork</code>.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/sdww0">Yuke Peng</a></strong><br />
+For high-value contributions to device and MMIO support in OSTD, as well as extensive work optimizing application benchmarks.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/grief8">Fabing Li</a></strong><br />
+For creating the Asterinas Benchmark Collection, which has proven immensely useful in our coordinated performance-optimization efforts.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/lucassong-mh">Shaowei Song</a></strong><br />
+For spearheading the development of <a href="https://github.com/asterinas/mlsdisk">MlsDisk</a> and taking on the challenging task of maintaining the sophisticated file system and block I/O subsystems.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/cqs21">Qingsong Chen</a></strong><br />
+For minimizing overhead on critical system-call paths and porting Asterinas to x86-64 platforms beyond Intel.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/liqinggd">Qing Li</a></strong><br />
+For laying the foundation of our file system and block I/O subsystems.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/Hsy-Intel">Siyuan Hui</a></strong><br />
+For adding Intel TDX support and establishing a self-hosted CI infrastructure.</p>
+  </li>
+</ol>
+
+<p><strong>Finally, we’d like to express our gratitude to the following forward-thinking organizations for supporting the Asterinas project (in alphabetical order):</strong></p>
+
+<ul>
+  <li>Ant Group</li>
+  <li>Intel Corporation</li>
+  <li>Peking University</li>
+  <li>Southern University of Science and Technology</li>
+  <li>Zhongguancun Lab</li>
+</ul>
+
+<p>Your support plays a crucial role in helping us push boundaries and accelerate development!</p>
+
+<p>Thank you for reading, and here’s to another productive year for Asterinas and our entire community!</p>]]></content><author><name>Hongliang Tian</name></author><summary type="html"><![CDATA[Happy New Year and the upcoming Lunar New Year! I wish everyone a wonderful and fruitful 2025.]]></summary></entry></feed>

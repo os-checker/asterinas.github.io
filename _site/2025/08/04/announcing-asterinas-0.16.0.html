@@ -1,0 +1,367 @@
+<!-- _layouts/custom.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>Announcing Asterinas 0.16.0</title>
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/images/Asterinas icon (in blue).svg">
+  <link rel="stylesheet" href="/css/post.css" media="screen and (min-width: 769px)">
+  <link rel="stylesheet" href="/css/post-mobile.css" media="screen and (max-width: 768px)">
+</head>
+
+<body>
+  <div class="header">
+    <div class="hdImgBox">
+      <a href="/">
+        <img src="/assets/images/homeIcon.png" alt="img">
+      </a>
+    </div>
+    <div class="hdLink">
+      <div data-tab="1" class="tab">Home</div>
+      <div data-tab="2" class="tab" style="color:#fff">Blog<div class="dot"> </div>
+      </div>
+      <div data-tab="3" class="tab">Docs</div>
+    </div>
+    <div class="hdLinks">
+      <div style="cursor: pointer;">
+        <img src="/assets/images/navigation.jpg" alt="img">
+      </div>
+      <div class="tabItem" flot="false">
+        <div data-tab="1" class="tab">Home</div>
+        <div class="line"></div>
+        <div data-tab="2" class="tab" style="color:#fff;font-weight: 500;"><div class="dot"></div>Blog
+        </div>
+        <div class="line"></div>
+        <div data-tab="3" class="tab">Docs</div>
+      </div>
+    </div>
+  </div>
+  <div class="tops">
+    <div class="banner">
+      <div class="content-container">
+        <div class="blogTitle">Posts</div>
+        <header class="postHeader">
+          <h1>Announcing Asterinas 0.16.0</h1>
+          <p class="post-meta">
+            <time class="headertime">Aug . 4 / 2025</time>
+            <span class="headerctr">|</span>
+            <span class="headerauthor">Authors：Hongliang Tian</span>
+          </p>
+        </header>
+        <header class="postHeader1">
+          <time class="headertime">Aug . 4 / 2025</time>
+          <h1>Announcing Asterinas 0.16.0</h1>
+          <span class="headerauthor">By Hongliang Tian</span>
+        </header>
+        <main>
+          <p>The Asterinas community is happy to announce a new version of Asterinas, 0.16.0!</p>
+
+<p>This version marks a significant leap forward with initial support for the <strong>LoongArch CPU architecture</strong>. We’ve also greatly expanded our Linux ABI compatibility by adding <strong>nine new system calls</strong>, including <code class="language-plaintext highlighter-rouge">memfd_create</code> and <code class="language-plaintext highlighter-rouge">pidfd_open</code>.</p>
+
+<p>Key enhancements in this release include broadened functionality for <strong>UNIX sockets</strong> (now supporting file descriptor passing and the <code class="language-plaintext highlighter-rouge">SOCK_SEQPACKET</code> socket type), partial support for <strong>netlink sockets of the <code class="language-plaintext highlighter-rouge">NETLINK_KOBJECT_UEVENT</code> type</strong>, and the foundational implementation of <strong>CgroupFS</strong>. Our testing infrastructure has also seen a significant upgrade with the integration of system call tests from the <strong>Linux Test Project (LTP)</strong>. Plus, we’ve adopted <strong><a href="https://nix.dev/manual/nix/2.28/introduction">Nix</a></strong> for building the initramfs, which streamlines our cross-compilation and testing workflows.</p>
+
+<p>We’d also like to extend a huge congratulations to members of the Asterinas community whose outstanding research papers about Asterinas were recently accepted by prestigious academic conferences:</p>
+
+<ul>
+  <li>“<strong>Asterinas: A Linux ABI-Compatible, Rust-Based Framekernel OS with a Small and Sound TCB</strong>” published at <a href="https://www.usenix.org/conference/atc25/presentation/peng-yuke">USENIX ATC’25</a></li>
+  <li>“<strong>Converos: Practical Model Checking for Verifying Rust OS Kernel Concurrency</strong>” published at <a href="https://www.usenix.org/conference/atc25/presentation/tang">USENIX ATC’25</a></li>
+  <li>“<strong>CortenMM: Efficient Memory Management with Strong Correctness Guarantees</strong>” to be published at <a href="https://sigops.org/s/conferences/sosp/2025/">SOSP’25</a></li>
+</ul>
+
+<h2 id="demo-booting-on-a-lenovo-laptop">Demo: Booting on a Lenovo Laptop</h2>
+
+<p>While our early development has primarily focused on improving Asterinas for cloud environments and VMs, the enhancements in version 0.16.0 have allowed us to achieve a significant new feat: successfully booting Asterinas on a <strong>Lenovo laptop</strong> and even running a snake game!</p>
+
+<div class="video-container">
+    <iframe src="https://player.bilibili.com/player.html?isOutside=true&amp;aid=114970301828426&amp;bvid=BV1KntGzvEh8&amp;cid=31482972390&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+    </iframe>
+</div>
+
+<p>A special shout-out to Ruihan Li for his excellent work in <a href="https://github.com/asterinas/asterinas/issues/1963">making this happen</a> and capturing the demo video!</p>
+
+<h2 id="asterinas-kernel">Asterinas Kernel</h2>
+
+<p>We have made the following key changes to the Asterinas kernel:</p>
+
+<ul>
+  <li>New system calls or features:
+    <ul>
+      <li>Memory:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2162">Add the <code class="language-plaintext highlighter-rouge">mremap</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2149">Add the <code class="language-plaintext highlighter-rouge">memfd_create</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2154">Add the <code class="language-plaintext highlighter-rouge">msync</code> system call (based on an inefficient implementation)</a></li>
+        </ul>
+      </li>
+      <li>Processes and IPC:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2151">Add the <code class="language-plaintext highlighter-rouge">pidfd_open</code> system call along with the <code class="language-plaintext highlighter-rouge">CLONE_PIDFD</code> flag</a></li>
+        </ul>
+      </li>
+      <li>File systems and I/O in general:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2128">Add the <code class="language-plaintext highlighter-rouge">close_range</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2125">Add the <code class="language-plaintext highlighter-rouge">fadvise64</code> system call (dummy implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2126">Add the <code class="language-plaintext highlighter-rouge">ioprio_get</code> and <code class="language-plaintext highlighter-rouge">ioprio_set</code> system calls (dummy implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2123">Add the <code class="language-plaintext highlighter-rouge">epoll_pwait2</code> system call</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Enhanced system calls or features:
+    <ul>
+      <li>Processes:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2146">Add <code class="language-plaintext highlighter-rouge">FUTEX_WAKE_OP</code> support for the <code class="language-plaintext highlighter-rouge">futex</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2166">Add <code class="language-plaintext highlighter-rouge">WSTOPPED</code> and <code class="language-plaintext highlighter-rouge">WCONTINUED</code> support to the <code class="language-plaintext highlighter-rouge">wait4</code> and <code class="language-plaintext highlighter-rouge">waitpid</code> system calls</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2215">Add more fields in <code class="language-plaintext highlighter-rouge">/proc/*/stat</code> and <code class="language-plaintext highlighter-rouge">/proc/*/status</code></a></li>
+        </ul>
+      </li>
+      <li>File systems and I/O in general:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2127">Add a few more features for the <code class="language-plaintext highlighter-rouge">statx</code> system call</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2230">Fix partial writes and reads in writev and readv</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2267">Introduce <code class="language-plaintext highlighter-rouge">FsType</code> and <code class="language-plaintext highlighter-rouge">FsRegistry</code></a></li>
+        </ul>
+      </li>
+      <li>Sockets and network:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2176">Enable UNIX sockets to send and receive file descriptors</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2268">Support <code class="language-plaintext highlighter-rouge">SO_PASSCRED</code> &amp; <code class="language-plaintext highlighter-rouge">SCM_CREDENTIALS</code> &amp; <code class="language-plaintext highlighter-rouge">SOCK_SEQPACKET</code> for UNIX sockets</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2109">Add <code class="language-plaintext highlighter-rouge">NETLINK_KOBJECT_UEVENT</code> support for netlink sockets (a partial implementation)</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2192">Support some missing socket options for UNIX stream sockets</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2155">Truncate netlink messages when the user-space buffer is full</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2277">Fix the networking address reusing behavior (<code class="language-plaintext highlighter-rouge">SO_REUSEADDR</code>)</a></li>
+        </ul>
+      </li>
+      <li>Security:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2121">Add basic cgroupfs implementation</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>New device support:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2054">Add basic i8042 keyboard support</a></li>
+    </ul>
+  </li>
+  <li>Enhanced device support:
+    <ul>
+      <li>TTY
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2108">Refactor the TTY abstraction to support multiple I/O devices correctly</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2210">Enhance the framebuffer console to support ANSI escape sequences</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Test infrastructure:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2053">Introduce the system call tests from LTP</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2101">Use Nix to build initramfs</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="ostd--osdk">OSTD &amp; OSDK</h2>
+
+<p>We have made the following key changes to OSTD:</p>
+
+<ul>
+  <li>CPU architectures:
+    <ul>
+      <li>x86-64:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2219">Refactor floating-point context management in context switching and signal handling</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2271">Use iret instead of sysret if the context is not clean</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2091">Don’t treat APIC IDs as CPU IDs</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2273">Fix some CPUID problems and add support for AMD CPUs</a></li>
+        </ul>
+      </li>
+      <li>RISC-V:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2044">Add RISC-V timer support</a></li>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2113">Parse device tree for RISC-V ISA extensions</a></li>
+        </ul>
+      </li>
+      <li>LoongArch:
+        <ul>
+          <li><a href="https://github.com/asterinas/asterinas/pull/2260">Add the initial LoongArch support</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>CPU:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2036">Add support for dynamically‌-allocated CPU-local objects</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2171">Require <code class="language-plaintext highlighter-rouge">T: Send</code> for <code class="language-plaintext highlighter-rouge">CpuLocal&lt;T, S&gt;</code></a></li>
+    </ul>
+  </li>
+  <li>Memory management:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/1948">Adopt a two-phase locking scheme for page tables</a></li>
+    </ul>
+  </li>
+  <li>Trap handling:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2107">Create <code class="language-plaintext highlighter-rouge">IrqChip</code> abstraction</a></li>
+    </ul>
+  </li>
+  <li>Task and scheduling:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2284">Rewrite the Rust doc of OSTD’s scheduling module</a></li>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2052">Fix the race between enabling IRQs and halting CPU</a></li>
+    </ul>
+  </li>
+  <li>Test infrastructure:
+    <ul>
+      <li><a href="https://github.com/asterinas/asterinas/pull/2218">Add CI to check documentation and publish API documentation to a self-host website</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>We have made the following key changes to OSDK:</p>
+
+<ul>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2203">Add OSDK’s code coverage feature</a></li>
+  <li><a href="https://github.com/asterinas/asterinas/pull/2168">Support <code class="language-plaintext highlighter-rouge">cargo osdk test</code> for RISC-V</a></li>
+</ul>
+
+<h2 id="contributors">Contributors</h2>
+
+<p>This release was made possible by contributions from 21 individuals. Thank you for your amazing work!</p>
+
+<ul>
+  <li>Ruihan Li (81 commits)</li>
+  <li>Qingsong Chen (31 commits)</li>
+  <li>jiangjianfeng (29 commits)</li>
+  <li>王英泰 (28 commits)</li>
+  <li>Chen Chengjun (24 commits)</li>
+  <li>Zhang Junyang (24 commits)</li>
+  <li>Wang Siyuan (16 commits)</li>
+  <li>Marsman1996 (13 commits)</li>
+  <li>Cautreoxit (8 commits)</li>
+  <li>Hsy-Intel (6 commits)</li>
+  <li>Zejun Zhao (5 commits)</li>
+  <li>Yang Zhichao (4 commits)</li>
+  <li>Hongliang Tian (3 commits)</li>
+  <li>js2xxx (3 commits)</li>
+  <li>Wei Zhang (2 commits)</li>
+  <li>Yuke Peng (2 commits)</li>
+  <li>Philipp Schuster (1 commit)</li>
+  <li>Ruize Tang (1 commit)</li>
+  <li>YanWQ-monad (1 commit)</li>
+  <li>stuuupidcat (1 commit)</li>
+  <li>yuankunzhang (1 commit)</li>
+</ul>
+
+<hr />
+
+<p>We’re incredibly proud of the progress made in Asterinas 0.16.0 and are excited about the new possibilities these changes unlock. We encourage you to explore the new features and contribute to the ongoing development!</p>
+
+        </main>
+      </div>
+    </div>
+    <div class="footer">
+      <!-- <div class="footer-content">
+        <div class="footer-img">
+          <a href="/">
+            <img class="footer-imgOne" src="/assets/images/twitter.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgTwo" src="/assets/images/flow.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgTwo" src="/assets/images/photo.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgThree" src="/assets/images/email.png" alt="img">
+          </a>
+        </div>
+        <div class="footer-title">
+          备案文案备案文案备案文案备案文案
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+</body>
+
+<script>
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var tabId = this.getAttribute('data-tab');
+      if (tabId === '1') {
+        window.location.href = '/index.html';
+      } else if (tabId === '2') {
+        window.location.href = '/blog.html';
+      } else if (tabId === '3') {
+        window.location.href = 'https://asterinas.github.io/book';
+      }
+    });
+  })
+
+  window.addEventListener('DOMContentLoaded', function () {
+    const screenWidth = window.innerWidth;
+    const hdLink = document.querySelectorAll('.hdLink');
+    const hdLinks = document.querySelectorAll('.hdLinks');
+    const blogTitle = document.querySelectorAll('.blogTitle');
+    const postHeader1 = document.querySelectorAll('.postHeader1');
+    const postHeader = document.querySelectorAll('.postHeader');
+    if (screenWidth > 768) {
+      hdLink[0].style.display = 'flex';
+      hdLinks[0].style.display = 'none';
+      blogTitle[0].style.display = 'block';
+      postHeader[0].style.display = 'block';
+      postHeader1[0].style.display = 'none';
+    } else {
+      hdLink[0].style.display = 'none';
+      hdLinks[0].style.display = 'block';
+      blogTitle[0].style.display = 'none';
+      postHeader[0].style.display = 'none';
+      postHeader1[0].style.display = 'block';
+    }
+
+    // 监听窗口大小变化事件
+    window.addEventListener('resize', function () {
+      const currentScreenWidth = window.innerWidth;
+      if (currentScreenWidth > 768) {
+        hdLink[0].style.display = 'flex';
+        hdLinks[0].style.display = 'none';
+        blogTitle[0].style.display = 'block';
+        postHeader[0].style.display = 'block';
+        postHeader1[0].style.display = 'none';
+      } else {
+        hdLink[0].style.display = 'none';
+        hdLinks[0].style.display = 'block';
+        blogTitle[0].style.display = 'none';
+        postHeader[0].style.display = 'none';
+        postHeader1[0].style.display = 'block';
+      }
+    })
+  });
+
+  const hdLinks = document.querySelectorAll('.hdLinks');
+  const tabItem = document.querySelectorAll('.tabItem');
+  hdLinks[0].addEventListener('click', function () {
+    if (tabItem[0].getAttribute('flot') === 'false') {
+      tabItem[0].style.display = 'block';
+      tabItem[0].setAttribute('flot', true);
+    } else {
+      tabItem[0].style.display = 'none';
+      tabItem[0].setAttribute('flot', 'false');
+    }
+  });
+
+  window.onclick = (event) => {
+    if (event.target !== tabItem[0] && event.target !== hdLinks[0].children[0].children[0]) {
+      tabItem[0].style.display = 'none';
+      tabItem[0].setAttribute('flot', 'false');
+    }
+  }
+</script>
+
+</html>

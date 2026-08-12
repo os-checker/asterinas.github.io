@@ -1,0 +1,283 @@
+<!-- _layouts/custom.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asterinas in 2024</title>
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/images/Asterinas icon (in blue).svg">
+  <link rel="stylesheet" href="/css/post.css" media="screen and (min-width: 769px)">
+  <link rel="stylesheet" href="/css/post-mobile.css" media="screen and (max-width: 768px)">
+</head>
+
+<body>
+  <div class="header">
+    <div class="hdImgBox">
+      <a href="/">
+        <img src="/assets/images/homeIcon.png" alt="img">
+      </a>
+    </div>
+    <div class="hdLink">
+      <div data-tab="1" class="tab">Home</div>
+      <div data-tab="2" class="tab" style="color:#fff">Blog<div class="dot"> </div>
+      </div>
+      <div data-tab="3" class="tab">Docs</div>
+    </div>
+    <div class="hdLinks">
+      <div style="cursor: pointer;">
+        <img src="/assets/images/navigation.jpg" alt="img">
+      </div>
+      <div class="tabItem" flot="false">
+        <div data-tab="1" class="tab">Home</div>
+        <div class="line"></div>
+        <div data-tab="2" class="tab" style="color:#fff;font-weight: 500;"><div class="dot"></div>Blog
+        </div>
+        <div class="line"></div>
+        <div data-tab="3" class="tab">Docs</div>
+      </div>
+    </div>
+  </div>
+  <div class="tops">
+    <div class="banner">
+      <div class="content-container">
+        <div class="blogTitle">Posts</div>
+        <header class="postHeader">
+          <h1>Asterinas in 2024</h1>
+          <p class="post-meta">
+            <time class="headertime">Jan . 20 / 2025</time>
+            <span class="headerctr">|</span>
+            <span class="headerauthor">Authors：Hongliang Tian</span>
+          </p>
+        </header>
+        <header class="postHeader1">
+          <time class="headertime">Jan . 20 / 2025</time>
+          <h1>Asterinas in 2024</h1>
+          <span class="headerauthor">By Hongliang Tian</span>
+        </header>
+        <main>
+          <p><strong>Happy New Year and the upcoming Lunar New Year!</strong> I wish everyone a wonderful and fruitful 2025.</p>
+
+<p>The blog section of the Asterinas website has existed since day one, yet we’ve been so busy making great technical progress that we haven’t written a single post—until now! One of my New Year’s resolutions, as the maintainer of Asterinas, is to encourage community members to share their thoughts and progress more regularly. Now that we have entered 2025, I think this is the perfect time to look back on our achievements of 2024 and write the very first official Asterinas blog post!</p>
+
+<p>In this post, I’d like to summarize the amazing progress we made in 2024.</p>
+
+<h2 id="what-we-achieved">What We Achieved</h2>
+
+<p>In January 2024, we felt that the Asterinas project had grown mature enough to share with the rest of the world. So, we made it open source! As a result, 2024 was our first year as an open-source project.</p>
+
+<p>In 2024, we’ve introduced a range of enhancements that boost productivity, expand functionality, optimize performance, and strengthen system safety. Let’s take a closer look.</p>
+
+<!-- Insert a transition paragraph to introduce the followinfg key aspects of improvements -->
+
+<!--
+Here is a quick snapshot of our progress in numbers:
+
+| Metric                 | Total  | Added in 2024  |
+|------------------------|--------|----------------|
+| **Commits**        | 1909   | +1000          |
+| **PRs**            | 1000   | +XXX           |
+| **Issues**         | 600    | +XXX           |
+| **Contributors**   | 50     | +XXX           |
+
+While these numbers highlight our growth, they only scratch the surface of what Asterinas has accomplished. Beyond raw statistics, our community has introduced major improvements over various aspects.
+-->
+
+<h3 id="productivity-boosted">Productivity Boosted</h3>
+
+<p>We believe that the happiness of OS developers is crucial to Asterinas’s success. Developers deserve better languages (Rust), better APIs (OSTD), and better tooling (OSDK). That’s why we created and published <a href="https://crates.io/crates/ostd">OSTD</a> and <a href="https://crates.io/crates/cargo-osdk">OSDK</a> on crates.io. Asterinas has been built with the OSTD and OSDK; your kernels can, too!</p>
+
+<ul>
+  <li><strong>OSTD</strong> is the (unofficial) standard library for Rust OS development. It provides <a href="https://docs.rs/ostd/latest/ostd/">a small set of safe APIs</a> that are <em>powerful</em> enough to write general-purpose, UNIX-style OS kernels in safe Rust.</li>
+  <li><strong>OSDK</strong> is a Cargo subcommand that streamlines the workflow of Rust OS projects based on OSTD. With OSDK, you can create, build, and test Rust OS projects just as easily as you do regular Rust applications with Cargo. It even includes built-in support for <a href="https://asterinas.github.io/book/osdk/reference/commands/debug.html">debugging kernels in a VM</a> and <a href="https://asterinas.github.io/book/osdk/reference/commands/profile.html">profiling kernels via sampling</a>.</li>
+</ul>
+
+<h3 id="functionality-enriched">Functionality Enriched</h3>
+
+<p>Asterinas now provides <a href="https://asterinas.github.io/book/kernel/linux-compatibility.html">over 180 Linux system calls</a>, with about 60 added in 2024. On Intel x86 machines, we introduced <a href="https://asterinas.github.io/book/kernel/intel_tdx.html">Intel TDX support</a>, making Asterinas a viable guest OS for TDX-based Confidential VMs. We also laid the groundwork for RISC-V CPU architecture support, broadening Asterinas’s hardware compatibility.</p>
+
+<h3 id="performance-optimized">Performance Optimized</h3>
+
+<p>We invested a great deal of effort in pinpointing and resolving performance bottlenecks. To measure our progress, we established the <a href="https://github.com/asterinas/asterinas/tree/main/test/benchmark">Asterinas Benchmark Collection</a>, which runs various benchmarks nightly and compares Asterinas’s normalized performance against Linux. We’re proud to say that in single-core settings, Asterinas’s performance is on par with Linux in benchmarks like <a href="https://asterinas.github.io/benchmark/lmbench/">LMbench</a>. In 2025, we will turn our attention to optimizing performance for SMP (Symmetric Multiprocessing) environments.</p>
+
+<h3 id="safety-enhanced">Safety Enhanced</h3>
+
+<p>Asterinas’s signature <a href="https://asterinas.github.io/book/kernel/the-framekernel-architecture.html">framekernel</a> OS architecture promises a small and sound trusted computing base (TCB) for kernel memory safety. To further ensure robustness, we collaborated with <a href="https://www.certik.com/">CertiK</a> for code auditing and formal verification of OSTD’s memory management module—an area that relies heavily on unsafe code. This joint effort has boosted our confidence in the soundness of OSTD and, by extension, Asterinas.</p>
+
+<h3 id="papers-published">Papers Published</h3>
+
+<p>We describe the design principles of our novel framekernel OS architecture in two research papers:</p>
+<ul>
+  <li>A short-paper version published at <a href="https://dl.acm.org/doi/10.1145/3678015.3680492">APSys’24</a>.</li>
+  <li>A full-paper version, currently under submission, which will soon be posted on arXiv for preview.</li>
+</ul>
+
+<h2 id="2025-roadmap">2025 Roadmap</h2>
+
+<p>We’ll be spinning up our 2025 roadmap process in the very near future – stay tuned! If you’d like to get involved or contribute ideas, keep an eye on our GitHub repository and this blog.</p>
+
+<h2 id="thank-you">Thank You</h2>
+
+<p>We feel incredibly fortunate to have welcomed contributions from <a href="https://asterinas.github.io/contributors.html">over 50 individuals</a> so far. In this post, I’d like to specifically recognize the top 10 contributors of 2024 (by contribution score). It has been both an honor and a pleasure to collaborate with all of you, and our achievements this past year would not have been possible without your dedication. Please join me in thanking this outstanding group of contributors!</p>
+
+<ol>
+  <li>
+    <p><strong><a href="https://github.com/junyang-zh">Junyang Zhang</a></strong><br />
+For leading the development of OSDK and the memory management module of OSTD.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/lrh2000">Ruihan Li</a></strong><br />
+For doing an excellent job in refactoring the network subsystem and demonstrating a steadfast commitment to enhancing code quality.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/StevenJiang1110">Jianfeng Jiang</a></strong><br />
+For tackling some challenging heavy lifts in optimizing sockets and the virtio-net driver.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/cchanging">Chengjun Chen</a></strong><br />
+For incredible work on optimizing memory- and process-management system calls such as <code class="language-plaintext highlighter-rouge">mmap</code> and <code class="language-plaintext highlighter-rouge">fork</code>.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/sdww0">Yuke Peng</a></strong><br />
+For high-value contributions to device and MMIO support in OSTD, as well as extensive work optimizing application benchmarks.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/grief8">Fabing Li</a></strong><br />
+For creating the Asterinas Benchmark Collection, which has proven immensely useful in our coordinated performance-optimization efforts.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/lucassong-mh">Shaowei Song</a></strong><br />
+For spearheading the development of <a href="https://github.com/asterinas/mlsdisk">MlsDisk</a> and taking on the challenging task of maintaining the sophisticated file system and block I/O subsystems.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/cqs21">Qingsong Chen</a></strong><br />
+For minimizing overhead on critical system-call paths and porting Asterinas to x86-64 platforms beyond Intel.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/liqinggd">Qing Li</a></strong><br />
+For laying the foundation of our file system and block I/O subsystems.</p>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/Hsy-Intel">Siyuan Hui</a></strong><br />
+For adding Intel TDX support and establishing a self-hosted CI infrastructure.</p>
+  </li>
+</ol>
+
+<p><strong>Finally, we’d like to express our gratitude to the following forward-thinking organizations for supporting the Asterinas project (in alphabetical order):</strong></p>
+
+<ul>
+  <li>Ant Group</li>
+  <li>Intel Corporation</li>
+  <li>Peking University</li>
+  <li>Southern University of Science and Technology</li>
+  <li>Zhongguancun Lab</li>
+</ul>
+
+<p>Your support plays a crucial role in helping us push boundaries and accelerate development!</p>
+
+<p>Thank you for reading, and here’s to another productive year for Asterinas and our entire community!</p>
+
+
+        </main>
+      </div>
+    </div>
+    <div class="footer">
+      <!-- <div class="footer-content">
+        <div class="footer-img">
+          <a href="/">
+            <img class="footer-imgOne" src="/assets/images/twitter.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgTwo" src="/assets/images/flow.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgTwo" src="/assets/images/photo.png" alt="img">
+          </a>
+          <a href="/">
+            <img class="footer-imgThree" src="/assets/images/email.png" alt="img">
+          </a>
+        </div>
+        <div class="footer-title">
+          备案文案备案文案备案文案备案文案
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+</body>
+
+<script>
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var tabId = this.getAttribute('data-tab');
+      if (tabId === '1') {
+        window.location.href = '/index.html';
+      } else if (tabId === '2') {
+        window.location.href = '/blog.html';
+      } else if (tabId === '3') {
+        window.location.href = 'https://asterinas.github.io/book';
+      }
+    });
+  })
+
+  window.addEventListener('DOMContentLoaded', function () {
+    const screenWidth = window.innerWidth;
+    const hdLink = document.querySelectorAll('.hdLink');
+    const hdLinks = document.querySelectorAll('.hdLinks');
+    const blogTitle = document.querySelectorAll('.blogTitle');
+    const postHeader1 = document.querySelectorAll('.postHeader1');
+    const postHeader = document.querySelectorAll('.postHeader');
+    if (screenWidth > 768) {
+      hdLink[0].style.display = 'flex';
+      hdLinks[0].style.display = 'none';
+      blogTitle[0].style.display = 'block';
+      postHeader[0].style.display = 'block';
+      postHeader1[0].style.display = 'none';
+    } else {
+      hdLink[0].style.display = 'none';
+      hdLinks[0].style.display = 'block';
+      blogTitle[0].style.display = 'none';
+      postHeader[0].style.display = 'none';
+      postHeader1[0].style.display = 'block';
+    }
+
+    // 监听窗口大小变化事件
+    window.addEventListener('resize', function () {
+      const currentScreenWidth = window.innerWidth;
+      if (currentScreenWidth > 768) {
+        hdLink[0].style.display = 'flex';
+        hdLinks[0].style.display = 'none';
+        blogTitle[0].style.display = 'block';
+        postHeader[0].style.display = 'block';
+        postHeader1[0].style.display = 'none';
+      } else {
+        hdLink[0].style.display = 'none';
+        hdLinks[0].style.display = 'block';
+        blogTitle[0].style.display = 'none';
+        postHeader[0].style.display = 'none';
+        postHeader1[0].style.display = 'block';
+      }
+    })
+  });
+
+  const hdLinks = document.querySelectorAll('.hdLinks');
+  const tabItem = document.querySelectorAll('.tabItem');
+  hdLinks[0].addEventListener('click', function () {
+    if (tabItem[0].getAttribute('flot') === 'false') {
+      tabItem[0].style.display = 'block';
+      tabItem[0].setAttribute('flot', true);
+    } else {
+      tabItem[0].style.display = 'none';
+      tabItem[0].setAttribute('flot', 'false');
+    }
+  });
+
+  window.onclick = (event) => {
+    if (event.target !== tabItem[0] && event.target !== hdLinks[0].children[0].children[0]) {
+      tabItem[0].style.display = 'none';
+      tabItem[0].setAttribute('flot', 'false');
+    }
+  }
+</script>
+
+</html>
