@@ -210,6 +210,7 @@ a {
 }
 
 .tabItem .tab {
+    display: block;
     width: 7.65rem;
     height: 3.9rem;
     cursor: pointer;
@@ -247,7 +248,7 @@ a {
 
 .tops {
     width: 100%;
-    background-image: url("/assets/images/ydbeijing.png");
+    background-image: url("/asterinas.github.io/assets/images/ydbeijing.png");
     background-size: 100% 39.5rem;
     background-repeat: no-repeat;
     background-position: center top -7rem;
@@ -590,7 +591,7 @@ a {
 
 .tb-get-titleBox {
     width: 13.3rem;
-    background-image: url("/assets/images/unite.png");
+    background-image: url("/asterinas.github.io/assets/images/unite.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     display: flex;
